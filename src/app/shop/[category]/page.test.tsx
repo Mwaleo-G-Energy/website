@@ -129,7 +129,7 @@ describe("a category page's trail", () => {
     const ld = trail(await render("gift-packages"));
     expect(ld["@type"]).toBe("BreadcrumbList");
     expect(ld.itemListElement.map((i: { name: string }) => i.name)).toEqual(["Home", "Shop", "Gift Packages"]);
-    expect(ld.itemListElement[2].item).toBe("https://www.watchfusionkenya.com/shop/gift-packages");
+    expect(ld.itemListElement[2].item).toBe("https://mwaleogreenenergy.co.ke/shop/gift-packages");
   });
 });
 
@@ -159,7 +159,7 @@ describe("a category page's metadata", () => {
     expect(m.openGraph).toMatchObject({
       type: "website",
       locale: "en_KE",
-      siteName: "Watch Fusion Kenya",
+      siteName: "Mwaleo Green Energy",
       images: [{ url: "/share-image.png", width: 1200, height: 630 }],
     });
   });

@@ -1,7 +1,3 @@
-// The address the shop is served from. The plain address (without www) only redirects here, so every address given to
-// search engines (canonical links, the sitemap, shared links, structured data) uses this one.
-export const SITE_URL = "https://www.watchfusionkenya.com";
-
-// The shop's name, written one way everywhere: page titles, link previews and structured data. (The store's own text may spell it
-// differently, as in the title written for the Casio page; that is the shop's to edit in Wix.)
-export const SITE_NAME = "Watch Fusion Kenya";
+export const SITE_URL = "https://mwaleogreenenergy.co.ke";
+export const SITE_NAME = "Mwaleo Green Energy";
+export const SITE_DESCRIPTION = "Authorised Felicity Solar dealer in Nairobi CBD. Shop off-grid solar inverters, lithium batteries and solar kits.";

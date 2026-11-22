@@ -8,13 +8,12 @@ const pngSize = (file: string) => {
 };
 
 describe("site icons", () => {
-  it("has an SVG icon of the W mark on a dark tile, so it shows in both light and dark browser tabs", () => {
+  it("uses the supplied Mwaleo sun-and-rings mark", () => {
     const svg = readFileSync("src/app/icon.svg", "utf8");
     expect(svg).toMatch(/^<svg[^>]*xmlns="http:\/\/www\.w3\.org\/2000\/svg"[^>]*viewBox="[\d. ]+"/);
-    expect(svg).toMatch(/<rect[^>]*fill="#0a0a0a"/);
-    expect(svg).toMatch(/fill="#(ffc615|fec615|fec514)"/i);
-    expect(svg).toMatch(/fill="#ffffff"/i);
-    expect((svg.match(/<path/g) ?? []).length).toBeGreaterThan(5);
+    expect(svg).toMatch(/viewBox="0 0 1024 1024"/);
+    expect(svg).toMatch(/#F9A11B/i);
+    expect((svg.match(/<path/g) ?? []).length).toBeGreaterThanOrEqual(2);
   });
 
   it("is small enough for a browser tab icon", () => {

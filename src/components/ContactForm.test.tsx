@@ -43,12 +43,11 @@ describe("ContactForm", () => {
     expect(waiting).not.toContain("<textarea");
   });
 
-  it("offers WhatsApp, a call and email instead when the form is not available", () => {
+  it("shows an unavailable state without unconfigured fallback links", () => {
     const off = renderToStaticMarkup(<ContactForm initialAvailable={false} />);
     expect(off).not.toContain("<form");
-    expect(off).toContain("https://wa.me/254796044969");
-    expect(off).toContain("tel:+254796044969");
-    expect(off).toContain("mailto:");
+    expect(off).toContain("The message form is unavailable");
+    expect(off).not.toMatch(/wa\.me|tel:|mailto:/);
   });
 
   it("names the trap box something no password manager or browser fills in", () => {

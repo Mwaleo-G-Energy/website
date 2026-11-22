@@ -55,7 +55,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
       title: typeof title === "string" ? title : title.absolute,
       description,
       url: href,
-      images: [{ url: "/share-image.png", width: 1200, height: 630, alt: `${SITE_NAME}: Wear the Moment, Own the Legacy` }],
+      images: [{ url: "/share-image.png", width: 1200, height: 630, alt: SITE_NAME }],
     },
     ...robots,
   };

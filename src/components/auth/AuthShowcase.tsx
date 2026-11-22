@@ -8,7 +8,7 @@ export type ShowcaseWatch = { id: string; name: string; imageUrl: string; priceL
 
 const SLIDE_MS = 4000;
 
-// A few of the shop's watches fading one into the next beside the sign-in form.
+// A few of the shop's products fading one into the next beside the sign-in form.
 const AuthShowcase = ({ watches, className = "" }: { watches: ShowcaseWatch[]; className?: string }) => {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -25,7 +25,7 @@ const AuthShowcase = ({ watches, className = "" }: { watches: ShowcaseWatch[]; c
 
   return (
     <section
-      aria-label="Our watches"
+      aria-label="Our solar equipment"
       className={`relative overflow-hidden rounded-2xl bg-brand-navy ring-1 ring-brand-gold/40 ${className}`}
     >
       {watches.map((watch, i) => (

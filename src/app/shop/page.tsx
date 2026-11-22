@@ -10,8 +10,8 @@ type Params = { [key: string]: string | string[] | undefined };
 export async function generateMetadata({ searchParams }: { searchParams: Promise<Params> }): Promise<Metadata> {
     const params = await searchParams;
     return {
-        title: "Shop watches",
-        description: "Browse men's and ladies' watches and gifts from Watch Fusion Kenya, with delivery across Nairobi and Kenya.",
+        title: "Shop solar equipment",
+        description: "Browse Felicity Solar inverters, lithium batteries and off-grid kits at Mwaleo Green Energy.",
         alternates: { canonical: "/shop" },
         openGraph: pageShare("/shop"),
         // A search or a filtered list is not a page to rank: the plain shop is.

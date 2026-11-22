@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
+import { SITE_NAME } from '@/lib/site'
 import SearchBar from './SearchBar'
 import Categories from './CategoryList'
 import Menu from './Menu'
@@ -58,24 +59,23 @@ const Navbar = () => {
           <div className='flex justify-start'>
             <Menu />
           </div>
-          <Link href="/" aria-label="Watch Fusion Kenya, home" className='flex items-center h-11'>
-            <span className='relative block h-9 aspect-[2209/823] overflow-hidden'>
-              {/* Black lettering on the light page, white lettering on the black page */}
+          <Link href="/" aria-label={`${SITE_NAME}, home`} className='flex items-center h-11'>
+            <span className='relative block h-[50px] aspect-[970/400]'>
               <Image
-                src="/logo-on-light.png"
-                alt="Watch Fusion Kenya"
+                src="/mwaleo-logo-horizontal.svg"
+                alt={SITE_NAME}
                 fill
-                sizes="110px"
+                sizes="122px"
                 loading="eager"
-                className='object-cover object-top dark:hidden'
+                className='object-contain dark:hidden'
               />
               <Image
-                src="/logo.png"
+                src="/mwaleo-logo-horizontal-reverse.svg"
                 alt=""
                 fill
                 loading="eager"
-                sizes="110px"
-                className='hidden object-cover object-top dark:block dark:drop-shadow-[0_0_8px_rgba(249,201,43,0.5)]'
+                sizes="122px"
+                className='hidden object-contain dark:block'
               />
             </span>
           </Link>
@@ -106,23 +106,23 @@ const Navbar = () => {
         {/* Left Section */}
         <div className='flex flex-shrink-0 items-center gap-2'>
           {!onHome && <Menu />}
-          <Link href="/" aria-label="Watch Fusion Kenya, home" className="flex items-center flex-shrink-0">
-            <span className='relative block h-14 aspect-[2209/823] overflow-hidden'>
+          <Link href="/" aria-label={`${SITE_NAME}, home`} className="flex items-center flex-shrink-0">
+            <span className='relative block h-14 aspect-[970/400]'>
               <Image
-                src="/logo-on-light.png"
-                alt="Watch Fusion Kenya"
+                src="/mwaleo-logo-horizontal.svg"
+                alt={SITE_NAME}
                 fill
                 sizes="160px"
                 loading="eager"
-                className='object-cover object-top dark:hidden'
+                className='object-contain dark:hidden'
               />
               <Image
-                src="/logo.png"
+                src="/mwaleo-logo-horizontal-reverse.svg"
                 alt=""
                 fill
                 loading="eager"
                 sizes="160px"
-                className='hidden object-cover object-top dark:block dark:drop-shadow-[0_0_8px_rgba(249,201,43,0.5)]'
+                className='hidden object-contain dark:block'
               />
             </span>
           </Link>
