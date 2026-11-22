@@ -109,8 +109,8 @@ export const DeliveryPickerView = ({
       {typed && matches.length === 0 && (
         <p className="mt-2 text-sm text-gray-600">
           No area matches &ldquo;{query.trim()}&rdquo;. Not listed?{" "}
-          <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="font-medium text-gray-900 underline underline-offset-4">
-            Message us on WhatsApp<span className="sr-only"> (opens in a new tab)</span>
+          <a href={WHATSAPP_URL ?? "/contact"} target={WHATSAPP_URL ? "_blank" : undefined} rel={WHATSAPP_URL ? "noopener noreferrer" : undefined} className="font-medium text-gray-900 underline underline-offset-4">
+            {WHATSAPP_URL ? "Message us on WhatsApp" : "Contact Mwaleo"}
           </a>
           .
         </p>

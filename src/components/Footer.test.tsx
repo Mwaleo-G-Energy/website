@@ -34,7 +34,7 @@ describe("Footer", () => {
   it("has a column each for the brand, the shop, the pages and the shop's details", async () => {
     const t = text(await render());
     for (const heading of ["Shop", "Explore", "Visit us"]) expect(t).toContain(heading);
-    expect(t).toContain("Watch Fusion Kenya");
+    expect(t).toContain("Mwaleo Green Energy");
   });
 
   it("lists the real categories as links, starting with the whole shop", async () => {
@@ -59,34 +59,18 @@ describe("Footer", () => {
     expect(t).not.toMatch(/Terms of Service|Privacy Policy|Couple Sets/);
     const html = await render();
     expect(html).not.toContain('href="#"');
-    for (const path of ["/", "/shop", "/deals", "/contact", "/return-policy"]) expect(html).toContain(`href="${path}"`);
+    for (const path of ["/", "/shop", "/contact"]) expect(html).toContain(`href="${path}"`);
   });
 
-  it("shows the shop's real address, hours, phone and email", async () => {
+  it("shows the confirmed locality and leaves out unconfirmed contact details", async () => {
     const html = await render();
-    const t = text(html);
-    expect(t).toContain("Stanbank House");
-    expect(t).toContain("Moi Avenue");
-    expect(t).toMatch(/Mon to Fri 8:30am to 7pm/);
-    expect(html).toContain('href="tel:+254796044969"');
-    expect(html).toContain('href="mailto:info@watchfusionkenya.com"');
-    expect(html).toContain('href="https://wa.me/254796044969"');
-  });
-
-  it("links Instagram and TikTok with names a screen reader can say, in tap targets of at least 44 px", async () => {
-    const html = await render();
-    for (const name of ["Instagram", "TikTok"]) {
-      const tag = html.match(new RegExp(`<a [^>]*aria-label="${name}"[^>]*>`))?.[0] ?? "";
-      expect(tag).toContain('target="_blank"');
-      expect(tag).toContain('rel="noopener noreferrer"');
-      expect(tag).toMatch(/\bw-11\b/);
-      expect(tag).toMatch(/\bh-11\b/);
-    }
+    expect(html).toContain("Nairobi CBD");
+    expect(html).not.toMatch(/Stanbank House|watchfusion|mailto:|tel:|wa\.me/i);
   });
 
   it("carries the copyright line without a year that could go stale on a page built months ago", async () => {
     const html = await render();
-    expect(html).toContain("© Watch Fusion Kenya");
+    expect(html).toContain("© Mwaleo Green Energy");
     expect(html).not.toMatch(/© \d{4}/);
   });
 
@@ -100,19 +84,8 @@ describe("Footer", () => {
     expect(await render()).toMatch(/^<footer/);
   });
 
-  it("keeps the shop's contact details together in one address block for screen readers", async () => {
-    const html = await render();
-    const block = html.match(/<address[\s\S]*?<\/address>/)?.[0] ?? "";
-    for (const part of ["Stanbank House", 'href="tel:+254796044969"', 'href="mailto:info@watchfusionkenya.com"', "Mon to Fri"]) {
-      expect(block).toContain(part);
-    }
-  });
-
-  it("says when a link opens a new tab", async () => {
-    const html = await render();
-    const links = html.match(/<a [^>]*target="_blank"[^>]*>[\s\S]*?<\/a>/g) ?? [];
-    expect(links.length).toBeGreaterThan(0);
-    for (const a of links) expect(a).toMatch(/opens in a new tab/i);
+  it("groups the locality in an address landmark", async () => {
+    expect(await render()).toMatch(/<address[^>]*><p>Nairobi CBD<\/p><\/address>/);
   });
 
   it("centres the brand, the link columns, the details and the copyright on a phone, and keeps them left aligned from tablet width up", async () => {
@@ -127,31 +100,25 @@ describe("Footer", () => {
       expect(tag).toMatch(/\btext-center\b/);
       expect(tag).toMatch(/\bmd:text-left\b/);
     }
-    expect(html).toMatch(/<p class="[^"]*text-center[^"]*md:text-left[^"]*">© Watch/);
+    expect(html).toMatch(/<p class="[^"]*text-center[^"]*md:text-left[^"]*">© Mwaleo/);
   });
 
-  it("centres the social buttons on phones and computers, and the opening hours on a phone", async () => {
-    const html = await render();
-    expect(html).toMatch(/<div class="[^"]*justify-center[^"]*"><a [^>]*aria-label="Instagram"/);
-    expect(html).toMatch(/<dl class="[^"]*mx-auto[^"]*md:mx-0/);
-  });
-
-  it("shows the full logo, with its slogan, on every screen size", async () => {
+  it("shows the reverse logo on every screen size", async () => {
     const html = await render();
     const link = html.match(/<a [^>]*class="[^"]*\bmx-auto\b[^"]*"[^>]*><img[^>]*>/)?.[0] ?? "";
     expect(link).not.toBe("");
-    expect(link).toContain("Wear the Moment, Own the Legacy");
+    expect(link).toContain("/mwaleo-logo-horizontal-reverse.svg");
     expect(link).toMatch(/\bw-full\b/);
     expect(link).toMatch(/max-w-\[12\.5rem\]/);
     expect(link).not.toMatch(/\bhidden\b/);
     expect(link).not.toContain("object-cover");
   });
 
-  it("has only the logo and the social buttons in the brand column, with no second small logo or written tagline", async () => {
+  it("has only the logo in the brand column, with no second small logo or written tagline", async () => {
     const html = await render();
-    expect((html.match(/<img[^>]*src="[^"]*logo\.png[^"]*"/g) ?? []).length).toBe(1);
+    expect((html.match(/<img[^>]*src="[^"]*mwaleo-logo-horizontal-reverse\.svg[^"]*"/g) ?? []).length).toBe(1);
     expect(html).not.toContain("Watches and gifts in Nairobi");
-    expect(html).not.toMatch(/>Watch Fusion Kenya<\/span>/);
+    expect(html).not.toMatch(/>Mwaleo Green Energy<\/span>/);
   });
 
   it("gives the brand column more room than the others on computers, so the logo can be big", async () => {
@@ -159,7 +126,7 @@ describe("Footer", () => {
     expect(html).toMatch(/md:grid-cols-\[1\.6fr_1fr_1fr_1\.3fr\]/);
   });
 
-  it("centres the brand column on computers too: the logo sits in the middle of its column with the social buttons under it, while the other columns stay left aligned", async () => {
+  it("centres the brand column on computers too: the logo sits in the middle of its column while the other columns stay left aligned", async () => {
     const html = await render();
     const brand = html.match(/<div class="([^"]*col-span-2[^"]*)"[^>]*><a [^>]*mx-auto/)?.[1] ?? "";
     expect(brand).toMatch(/\bmd:text-center\b/);

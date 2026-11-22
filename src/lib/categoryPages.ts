@@ -57,7 +57,7 @@ export const categoryTitle = (category: CategoryPage): string | { absolute: stri
   category.seoTitle ? { absolute: category.seoTitle } : category.name;
 
 export const categoryDescription = (category: CategoryPage): string =>
-  category.seoDescription || category.description || `Shop ${category.name} at Watch Fusion Kenya, with delivery across Nairobi and Kenya.`;
+  category.seoDescription || category.description || `Shop ${category.name} from Mwaleo Green Energy in Nairobi.`;
 
 // Categories the shop has taken down, and where an old link to each now goes. Google still lists some of these pages, so a visitor who
 // follows one lands somewhere useful, not on "not found". A category the store shows again is shown, not redirected.

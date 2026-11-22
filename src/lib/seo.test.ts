@@ -11,15 +11,14 @@ import {
   summarise,
   websiteJsonLd,
 } from "@/lib/seo";
-import { ADDRESS_LINES, EMAIL, INSTAGRAM_URL, OPENING_HOURS, TIKTOK_URL, WHATSAPP_NUMBER } from "@/lib/contact";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 const html =
   "<p>An analogue quartz men's watch with a black dial, a leather band and a day and date display.</p><p>Key features</p><ul><li>Water resistant</li><li>Day and date display</li></ul><p>Specifications</p><ul><li>Case size: 45.1 x 38 x 9.4 mm</li></ul>";
 
 describe("the shop's name", () => {
-  it("is written one way, Watch Fusion Kenya", () => {
-    expect(SITE_NAME).toBe("Watch Fusion Kenya");
+  it("is written one way, Mwaleo Green Energy", () => {
+    expect(SITE_NAME).toBe("Mwaleo Green Energy");
   });
 });
 
@@ -235,35 +234,18 @@ describe("organizationJsonLd", () => {
   const ld = organizationJsonLd() as Record<string, any>;
 
   it("does not offer a shorter name for Google to display", () => {
-    expect(ld.name).toBe("Watch Fusion Kenya");
+    expect(ld.name).toBe("Mwaleo Green Energy");
     expect(ld).not.toHaveProperty("alternateName");
   });
 
-  it("is the shop, with its name, address, phone, email and pages, from the same details the contact page shows", () => {
+  it("publishes the confirmed store locality and omits unconfirmed contact details", () => {
     expect(ld["@type"]).toBe("Store");
     expect(ld.name).toBe(SITE_NAME);
     expect(ld.url).toBe(SITE_URL);
-    expect(ld.telephone).toBe(`+${WHATSAPP_NUMBER}`);
-    expect(ld.email).toBe(EMAIL);
-    expect(ld.sameAs).toEqual([INSTAGRAM_URL, TIKTOK_URL]);
-    expect(ld.address).toMatchObject({ "@type": "PostalAddress", addressLocality: "Nairobi", addressCountry: "KE" });
-    expect(ld.address.streetAddress).toBe("Stanbank House, 5th Floor, Wing B, Shop 46, Moi Avenue");
-  });
-
-  it("lists the opening hours the contact page shows: Monday to Friday 8:30 to 19:00, Saturday 10:00 to 19:00, closed Sunday", () => {
-    expect(OPENING_HOURS).toEqual([
-      { days: "Mon to Fri", hours: "8:30am to 7pm" },
-      { days: "Sat", hours: "10am to 7pm" },
-      { days: "Sun", hours: "Closed" },
-    ]);
-    expect(ld.openingHoursSpecification).toEqual([
-      { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], opens: "08:30", closes: "19:00" },
-      { "@type": "OpeningHoursSpecification", dayOfWeek: "Saturday", opens: "10:00", closes: "19:00" },
-    ]);
-  });
-
-  it("still reads the address the contact page holds, so a change there is noticed here", () => {
-    expect(ADDRESS_LINES).toEqual(["Stanbank House, 5th Floor, Wing B, Shop 46", "Moi Avenue, Nairobi"]);
+    expect(ld.address).toEqual({ "@type": "PostalAddress", addressLocality: "Nairobi", addressCountry: "KE" });
+    for (const field of ["telephone", "email", "sameAs", "openingHoursSpecification"]) {
+      expect(ld).not.toHaveProperty(field);
+    }
   });
 });
 
@@ -274,7 +256,7 @@ describe("pageShare", () => {
       locale: "en_KE",
       siteName: SITE_NAME,
       url: `${SITE_URL}/deals`,
-      images: [{ url: "/share-image.png", width: 1200, height: 630, alt: `${SITE_NAME}: Wear the Moment, Own the Legacy` }],
+      images: [{ url: "/share-image.png", width: 1200, height: 630, alt: SITE_NAME }],
     });
   });
 });
@@ -283,7 +265,7 @@ describe("websiteJsonLd", () => {
   it("names the site and tells Google how to search it, through the shop's own search address", () => {
     const ld = websiteJsonLd() as Record<string, any>;
     expect(ld["@type"]).toBe("WebSite");
-    expect(ld.name).toBe("Watch Fusion Kenya");
+    expect(ld.name).toBe("Mwaleo Green Energy");
     expect(ld.url).toBe(SITE_URL);
     expect(ld).not.toHaveProperty("alternateName");
     expect(ld.potentialAction).toMatchObject({ "@type": "SearchAction", target: { urlTemplate: `${SITE_URL}/shop?name={search_term_string}` }, "query-input": "required name=search_term_string" });

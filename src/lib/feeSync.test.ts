@@ -1,6 +1,13 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ensureFeeMatchesBasket, syncFee, whenFeeSyncIdle } from "@/lib/feeSync";
 import type { DeliveryArea } from "@/lib/delivery";
+
+beforeEach(() => {
+  vi.stubEnv("NEXT_PUBLIC_MWALEO_FREE_DELIVERY_FROM", "10000");
+});
+afterEach(() => {
+  vi.unstubAllEnvs();
+});
 
 const area: DeliveryArea = { id: "r1:0", place: "Gigiri", road: "Limuru Road", price: 450 };
 const ref = () => ({ current: null as string | null });

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { validateContact, type ContactErrors } from "@/lib/contactForm";
-import { EMAIL, PHONE_DISPLAY, PHONE_TEL, WHATSAPP_URL } from "@/lib/contact";
+import { WHATSAPP_URL } from "@/lib/contact";
 
 const field =
   "w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-base text-gray-900 placeholder:text-gray-400 focus:border-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-gold";
@@ -71,7 +71,7 @@ const ContactForm = ({ initialAvailable = null }: { initialAvailable?: boolean |
         answer?.error ??
           (response.status === 429
             ? "Too many messages. Please wait a minute and try again."
-            : "We could not send your message. Please message us on WhatsApp or call us instead.")
+            : "We could not send your message. Please try again later.")
       );
     } catch {
       setStatus("idle");
@@ -85,20 +85,12 @@ const ContactForm = ({ initialAvailable = null }: { initialAvailable?: boolean |
 
   if (!available) {
     return (
-      <div className="text-gray-700">
-        <p className="mb-4">The message form is not available right now. You can reach us here instead:</p>
-        <p className="flex flex-wrap gap-x-6 gap-y-2 font-medium">
-          <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 decoration-brand-gold decoration-2">
-            WhatsApp
-          </a>
-          <a href={PHONE_TEL} className="underline underline-offset-4 decoration-brand-gold decoration-2">
-            {PHONE_DISPLAY}
-          </a>
-          <a href={`mailto:${EMAIL}`} className="underline underline-offset-4 decoration-brand-gold decoration-2">
-            {EMAIL}
-          </a>
-        </p>
-      </div>
+      <p className="text-gray-700">
+        The message form is unavailable right now.
+        {WHATSAPP_URL && (
+          <> <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="underline">Chat on WhatsApp</a>.</>
+        )}
+      </p>
     );
   }
 
@@ -165,7 +157,7 @@ const ContactForm = ({ initialAvailable = null }: { initialAvailable?: boolean |
           maxLength={2000}
           aria-invalid={Boolean(errors.message)}
           aria-describedby={errors.message ? "contact-message-error" : undefined}
-          placeholder="Tell us which watch or gift you are asking about."
+          placeholder="Tell us which product or order you are asking about."
           className={`${field} resize-y`}
         />
         {errors.message && (

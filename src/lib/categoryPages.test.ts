@@ -97,7 +97,7 @@ describe("a category page's title and description", () => {
     expect(categoryDescription({ ...base, seoDescription: "SEO text.", description: "Own text." })).toBe("SEO text.");
     expect(categoryDescription({ ...base, description: "Own text." })).toBe("Own text.");
     expect(categoryDescription(base)).toMatch(/Gift Packages/);
-    expect(categoryDescription(base)).toMatch(/Watch Fusion Kenya/);
+    expect(categoryDescription(base)).toMatch(/Mwaleo Green Energy/);
     expect(categoryDescription(base).length).toBeGreaterThan(40);
   });
 

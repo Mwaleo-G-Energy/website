@@ -12,7 +12,6 @@ export const SITE_PAGES: MenuPage[] = [
   { name: "Homepage", href: "/" },
   { name: "Shop", href: "/shop" },
   { name: "Deals", href: "/deals" },
-  { name: "Gift Vouchers", href: "/gift-vouchers" },
   { name: "Contact", href: "/contact" },
 ];
 const SHOP_PAGE = "/shop";
@@ -84,7 +83,7 @@ export const buildMenu = (categories: MenuCategory[]): SiteMenu => {
       ...seasonal.map((c) => link(c, true)),
       ...main.map((c) => link(c)),
       // One menu closes the row: any other gift pages the store has, then the whole shop (under the store's own name for it, All Products,
-      // or Shop when the store does not show that page), Deals and Gift Vouchers. The whole shop is always one click away, shown once.
+      // or Shop when the store does not show that page), Deals. The whole shop is always one click away, shown once.
       { kind: "menu", group: { label: "More", items: rest, pages: [shopPage, ...SITE_PAGES.filter((page) => !NOT_IN_MORE.has(page.href) && page.href !== SHOP_PAGE)] } },
     ],
   };

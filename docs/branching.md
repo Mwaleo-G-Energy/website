@@ -1,33 +1,18 @@
 # How a change reaches the live site
 
-Two long-lived branches:
+`develop` is the preview branch. `main` is the production branch for `mwaleogreenenergy.co.ke`.
 
-- `main` is the live site. www.watchfusionkenya.com is built from it.
-- `develop` is the preview. Every change lands here first. Vercel builds it on its own address, `https://watchfusionke-git-develop-watch-fusion-ke.vercel.app`, which always shows the latest `develop`.
+1. Branch from `develop` and open a draft pull request into it.
+2. Run lint, type-check, tests, and build. Review the pull request in a fresh session once CI is green, then merge it with a merge commit.
+3. Ask the owner to review the Vercel preview. Use the URL for the Mwaleo Vercel project.
+4. Open a release pull request from `develop` into `main` after the owner approves the preview.
 
-Both branches are protected on GitHub: they cannot be deleted or force-pushed, and the automatic checks must pass before a merge. This also keeps the setting that deletes a pull request's branch after merging from deleting `develop` when it is released into `main`.
+For a production hotfix, open the pull request into `main`, then merge `main` back into `develop` through a pull request.
 
-## Steps
+## Preview configuration
 
-1. Work on a short branch (`feat/...`, `fix/...`, `chore/...`) cut from `develop`.
-2. Open a pull request into `develop`. The checks (lint, type check, tests, build) must pass and the change is reviewed.
-3. Merge into `develop` with a merge commit. The preview address updates within a few minutes.
-4. The owner looks at the preview and approves.
-5. Open one pull request from `develop` into `main` that lists the changes it carries. Merge it with a merge commit. Vercel then publishes the live site.
-6. A fix that cannot wait goes into `main` through its own pull request. Straight after, open a pull request from `main` into `develop` and merge it, so `develop` has the fix too and the two do not drift apart. The fix is then visible on the preview as well.
+Set the Mwaleo Wix configuration in both Vercel Preview and Production. A successful build can still leave the catalogue or sign-in unavailable when the Wix client ID is missing.
 
-## Showing a preview to the owner
+Set `NEXT_PUBLIC_MWALEO_WHATSAPP_NUMBER` to the confirmed international number in digits. When it is missing or invalid, WhatsApp links are hidden. Set `NEXT_PUBLIC_MWALEO_FREE_DELIVERY_FROM` only if Mwaleo confirms a free-delivery threshold in KES. Without it, the delivery engine uses the rate from Wix.
 
-Vercel asks for a Vercel login on every preview address. The owner has no Vercel account, so do one of these in the Vercel project:
-
-- Settings, Deployment Protection, "Deployment Protection Exceptions", Add Domain. Enter `watchfusionke-git-develop-watch-fusion-ke.vercel.app`. That address becomes public for anyone who has the link, and stays so until the exception is removed. Available on all Vercel plans, including Hobby.
-- Or create a Shareable Link for the `develop` branch in the same settings area. The link carries a secret in the address, and the address can be revoked.
-
-Vercel marks every preview with `X-Robots-Tag: noindex`, so search engines do not list it, whichever option is used.
-
-## Things to know
-
-- The preview uses the live store. Adding to the cart works the same, and an order placed from the preview is a real order. Checkout also sends the shopper back to the live site, because the return addresses are fixed to www.watchfusionkenya.com in `src/components/CartModal.tsx` and `src/app/cart/page.tsx`.
-- Everything in `develop` goes live together. To hold a change back, keep it out of `develop` until it is approved.
-- The Wix settings for the build (client ID, app ID, featured category and new-products category) must exist for Vercel's Preview environment as well as Production. Check all four in the Vercel project settings. A build succeeds even when one is missing, so a green build does not prove they are set.
-- Signing in and registering on a preview has not been tried. The Wix app lists only the live addresses as allowed, so it may need a setting there.
+A checkout on a preview backed by the live Wix store creates a real order. Coordinate any order verification with the owner.

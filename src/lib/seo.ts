@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { ADDRESS_LINES, EMAIL, INSTAGRAM_URL, TIKTOK_URL, WHATSAPP_NUMBER } from "@/lib/contact";
 import { seoOf, type SeoTag } from "@/lib/categoryPages";
-import { SITE_NAME, SITE_URL } from "@/lib/site";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 
 // What search engines and link previews are told about a page. The shop's own wording from the store (the SEO title and description
 // it writes for a product or a category) comes first; anything it has not written is made here, once, the same way everywhere.
@@ -81,14 +80,14 @@ const productUrl = (slug: string) => `${SITE_URL}/${slug}`;
 
 const productDescription = (p: ProductSeo): string => {
   const seo = seoOf(p.seoTags);
-  return seo.description || summarise(plainText(p.description)) || `Buy ${p.name} at ${SITE_NAME}. Genuine watches with delivery across Nairobi and Kenya.`;
+  return seo.description || summarise(plainText(p.description)) || `Buy ${p.name} at ${SITE_NAME}.`;
 };
 
 export const productMetadata = (p: ProductSeo): Metadata => {
   const seo = seoOf(p.seoTags);
   const description = productDescription(p);
   const shareTitle = seo.title ?? `${p.name} | ${SITE_NAME}`;
-  const image = p.imageUrl ? { url: p.imageUrl, alt: p.name } : { url: "/share-image.png", alt: `${SITE_NAME}: Wear the Moment, Own the Legacy` };
+  const image = p.imageUrl ? { url: p.imageUrl, alt: p.name } : { url: "/share-image.png", alt: SITE_NAME };
   return {
     title: seo.title ? { absolute: seo.title } : p.name,
     description,
@@ -132,7 +131,7 @@ export const pageShare = (path: string) => ({
   locale: "en_KE",
   siteName: SITE_NAME,
   url: `${SITE_URL}${path}`,
-  images: [{ url: "/share-image.png", width: 1200, height: 630, alt: `${SITE_NAME}: Wear the Moment, Own the Legacy` }],
+  images: [{ url: "/share-image.png", width: 1200, height: 630, alt: SITE_NAME }],
 });
 
 export const breadcrumbJsonLd = (trail: { name: string; path: string }[]): object => ({
@@ -140,11 +139,6 @@ export const breadcrumbJsonLd = (trail: { name: string; path: string }[]): objec
   "@type": "BreadcrumbList",
   itemListElement: trail.map((step, i) => ({ "@type": "ListItem", position: i + 1, name: step.name, item: `${SITE_URL}${step.path}` })),
 });
-
-// The shop, from the same details the Contact page shows. The opening hours below are written out as the schema wants them; a test
-// holds them to the hours on the Contact page.
-const [street = "", place = ""] = ADDRESS_LINES;
-const [road = "", city = "Nairobi"] = place.split(",").map((part) => part.trim());
 
 export const organizationJsonLd = (): object => ({
   "@context": "https://schema.org",
@@ -154,16 +148,9 @@ export const organizationJsonLd = (): object => ({
   url: SITE_URL,
   image: `${SITE_URL}/share-image.png`,
   logo: `${SITE_URL}/apple-icon.png`,
-  description: "Premium watches and watch gifts in Nairobi, with delivery across Kenya.",
-  telephone: `+${WHATSAPP_NUMBER}`,
-  email: EMAIL,
+  description: SITE_DESCRIPTION,
   currenciesAccepted: "KES",
-  address: { "@type": "PostalAddress", streetAddress: `${street}, ${road}`, addressLocality: city, addressCountry: "KE" },
-  openingHoursSpecification: [
-    { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], opens: "08:30", closes: "19:00" },
-    { "@type": "OpeningHoursSpecification", dayOfWeek: "Saturday", opens: "10:00", closes: "19:00" },
-  ],
-  sameAs: [INSTAGRAM_URL, TIKTOK_URL],
+  address: { "@type": "PostalAddress", addressLocality: "Nairobi", addressCountry: "KE" },
 });
 
 export const websiteJsonLd = (): object => ({

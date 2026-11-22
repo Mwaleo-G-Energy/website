@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const hideWhileScrolling = vi.hoisted(() => vi.fn(() => () => {}));
 const usePathname = vi.hoisted(() => vi.fn(() => "/"));
+vi.mock("@/lib/contact", () => ({ WHATSAPP_URL: "https://wa.me/254700000000" }));
 vi.mock("@/lib/scrollHider", () => ({ hideWhileScrolling }));
 vi.mock("next/navigation", () => ({ usePathname }));
 // Run effects at once, since the server renderer never runs them.

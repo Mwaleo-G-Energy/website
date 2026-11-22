@@ -1,6 +1,11 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { orderMessage, orderUrl } from "@/lib/whatsappOrder";
 import { WHATSAPP_NUMBER } from "@/lib/contact";
+
+vi.mock("@/lib/contact", () => ({
+  WHATSAPP_NUMBER: "254700000000",
+  WHATSAPP_URL: "https://wa.me/254700000000",
+}));
 
 const product = { name: "Naviforce NF9269 Men's Silver Dial Watch", price: 3500, url: "https://www.watchfusionkenya.com/naviforce-nf9269" };
 
@@ -10,7 +15,7 @@ describe("orderMessage", () => {
     expect(text).toContain("Naviforce NF9269 Men's Silver Dial Watch");
     expect(text).toContain("KES 3,500");
     expect(text).toContain("https://www.watchfusionkenya.com/naviforce-nf9269");
-    expect(text).toMatch(/order/i);
+    expect(text).toMatch(/quote/i);
   });
 
   it("leaves the price out when there is none rather than writing a wrong one", () => {
@@ -39,18 +44,18 @@ describe("orderUrl", () => {
   it("still makes a link when a name holds a broken character such as half an emoji", () => {
     const broken = `Gift set \uD83D`;
     expect(() => orderUrl({ ...product, name: broken })).not.toThrow();
-    expect(new URL(orderUrl({ ...product, name: broken })).searchParams.get("text")).toContain("Gift set");
+    expect(new URL(orderUrl({ ...product, name: broken })!).searchParams.get("text")).toContain("Gift set");
   });
 
   it("opens a chat with the shop's number and the message ready to send", () => {
-    const url = orderUrl(product);
+    const url = orderUrl(product)!;
     expect(url.startsWith(`https://wa.me/${WHATSAPP_NUMBER}?text=`)).toBe(true);
     const text = new URL(url).searchParams.get("text");
     expect(text).toBe(orderMessage(product));
   });
 
   it("encodes characters that would break the link, such as & # and quotes", () => {
-    const url = orderUrl({ ...product, name: `Gift & "Set" #1` });
+    const url = orderUrl({ ...product, name: `Gift & "Set" #1` })!;
     expect(url).not.toMatch(/\s/);
     expect(url).not.toContain('"');
     expect(url.split("?")[1]).not.toContain("#");

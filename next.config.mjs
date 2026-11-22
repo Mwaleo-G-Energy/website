@@ -15,18 +15,6 @@ const nextConfig = {
     return [{ source: "/list", destination: "/shop", permanent: true }];
   },
 
-  // async redirects() {
-  //   return [
-  //     {
-  //       source: '/_api/:path*',
-  //       destination: 'https://store.watchfusionkenya.com/_api/:path*',
-  //     },
-  //     {
-  //       source: '/__ecom/:path*',
-  //       destination: 'https://store.watchfusionkenya.com/__ecom/:path*',
-  //     },
-  //   ];
-  // },
 };
 
 export default nextConfig;
