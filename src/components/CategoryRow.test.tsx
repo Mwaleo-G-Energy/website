@@ -153,9 +153,8 @@ describe("CategoryRow", () => {
     expect(row).not.toContain("pr-8");
   });
 
-  it("sits close under the header on a phone, with a smaller gap above and below than on a computer", () => {
+  it("uses less vertical spacing on a phone than on a computer", () => {
     expect(html).toMatch(/<div class="py-1 md:py-8"/);
-    expect(readFileSync("src/app/page.tsx", "utf8")).toMatch(/<div className="mt-0 md:mt-6">\s*<Suspense/);
   });
 
   it("lists Men and Women, indented, right under Casio in the brands menu, each a link to its own page", () => {

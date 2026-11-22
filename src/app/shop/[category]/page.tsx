@@ -11,6 +11,7 @@ import {
   findCategory,
   hasFilters,
   legacyCategoryTarget,
+  pendingLaunchCategory,
   retiredCategoryTarget,
   type CategoryPage,
 } from "@/lib/categoryPages";
@@ -38,7 +39,12 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   } catch {
     return { title: "Shop", ...robots };
   }
-  if (!category) return { title: "Category not found", robots: { index: false, follow: false } };
+  if (!category) {
+    const pending = pendingLaunchCategory(slug);
+    return pending
+      ? { title: pending.name, alternates: { canonical: categoryHref(slug) }, robots: { index: false, follow: true } }
+      : { title: "Category not found", robots: { index: false, follow: false } };
+  }
 
   const href = categoryHref(category.slug);
   const title = categoryTitle(category);
@@ -72,6 +78,8 @@ export default async function CategoryPageRoute({ params, searchParams }: Props)
   const categories = await getCategoryPages();
   const category = findCategory(categories, slug);
   if (!category) {
+    const pending = pendingLaunchCategory(slug);
+    if (pending) return ShopListing({ category: pending, categories, searchParams: {}, pendingCategory: true });
     const moved = retiredCategoryTarget(slug);
     if (moved) permanentRedirect(moved);
     notFound();
