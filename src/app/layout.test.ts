@@ -26,8 +26,8 @@ describe("fonts", () => {
   const bodyTag = source.match(/<body\s+className=\{`([^`]*)`\}/)?.[1] ?? "";
 
   it("loads DM Sans for body text and Montserrat for headings", () => {
-    expect(source).toContain('src: "./fonts/dm-sans-latin.woff2"');
-    expect(source).toContain('src: "./fonts/montserrat-latin.woff2"');
+    expect(source).toContain('src: "../../public/fonts/dm-sans-latin.woff2"');
+    expect(source).toContain('src: "../../public/fonts/montserrat-latin.woff2"');
   });
 
   it("names the CSS variables the Tailwind theme reads, so a rename on one side cannot silently drop the fonts", () => {

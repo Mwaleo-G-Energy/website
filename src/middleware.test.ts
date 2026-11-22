@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const wix = vi.hoisted(() => ({ calls: 0, fail: false }));
 vi.mock("@wix/sdk", () => ({
@@ -22,7 +22,10 @@ const at = (path: string, cookie?: string) => new NextRequest(`https://shop.test
 beforeEach(() => {
   wix.calls = 0;
   wix.fail = false;
+  vi.stubEnv("MWALEO_MAINTENANCE_MODE", undefined);
 });
+
+afterEach(() => vi.unstubAllEnvs());
 
 describe("which requests the visitor check runs on", () => {
   const runsOn = (path: string) => config.matcher.some((m) => new RegExp(`^${m}$`).test(path));
@@ -60,5 +63,22 @@ describe("the visitor check", () => {
     const res = await middleware(at("/shop"));
     expect(res.status).toBe(200);
     expect(res.cookies.get("refreshToken")).toBeUndefined();
+  });
+});
+
+describe("maintenance mode", () => {
+  it.each(["/", "/shop", "/cart", "/api/search"])("stops %s before contacting Wix", async (path) => {
+    vi.stubEnv("MWALEO_MAINTENANCE_MODE", "true");
+    const res = await middleware(at(path));
+    expect(res.status).toBe(503);
+    expect(wix.calls).toBe(0);
+    expect(res.cookies.get("refreshToken")).toBeUndefined();
+  });
+
+  it("keeps the storefront open when explicitly disabled", async () => {
+    vi.stubEnv("MWALEO_MAINTENANCE_MODE", "false");
+    const res = await middleware(at("/shop"));
+    expect(res.status).toBe(200);
+    expect(wix.calls).toBe(1);
   });
 });
