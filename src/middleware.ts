@@ -1,5 +1,6 @@
 import { OAuthStrategy, createClient } from "@wix/sdk";
 import { NextRequest, NextResponse } from "next/server";
+import { maintenanceResponse } from "@/lib/maintenance";
 
 // Every page and data route of the shop needs the visitor's Wix session. The site's own files and pictures never do, and they are fetched
 // by link previews and search crawlers that carry no cookie, so they are left out: each would otherwise cost a call to Wix, and a Wix
@@ -9,6 +10,10 @@ export const config = {
 };
 
 export const middleware = async (request: NextRequest) => {
+  if (process.env.MWALEO_MAINTENANCE_MODE === "true") {
+    return maintenanceResponse(request.nextUrl.pathname, request.method);
+  }
+
   const cookies = request.cookies;
   const res = NextResponse.next();
 

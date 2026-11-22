@@ -127,6 +127,7 @@ Values live in Vercel (Preview and Production) and `.env.local`. Wix settings af
 |---|---|---|
 | `NEXT_PUBLIC_WIX_CLIENT_ID` | yes | Wix auth fails at request time (the build itself passes). Public identifier, not a secret. |
 | `WIX_CLIENT_SECRET` | only for delivery fees and the contact form | Those features stay off. Server-only: never prefix with `NEXT_PUBLIC_`, never log it. |
+| `MWALEO_MAINTENANCE_MODE` | no | The storefront runs normally. Set to `true` in Vercel Production and redeploy to show the maintenance notice. Remove the variable or set it to `false` and redeploy to reopen. |
 | `FEATURED_PRODUCTS_CATEGORY_ID` | optional | The homepage hides the section. |
 | `NEW_PRODUCTS_CATEGORY_ID` | optional | The homepage hides the section. |
 
