@@ -9,10 +9,23 @@
 
 For a production hotfix, open the pull request into `main`, then merge `main` back into `develop` through a pull request.
 
-## Preview configuration
+## Connect the GitHub repo to Vercel
 
-Set the Mwaleo Wix configuration in both Vercel Preview and Production. A successful build can still leave the catalogue or sign-in unavailable when the Wix client ID is missing.
+Import `Mwaleo-G-Energy/website` into the Mwaleo Vercel project. Use the Next.js preset, the repository root, and Node.js 22 to match CI. Keep the preset’s build and output settings.
 
-Set `NEXT_PUBLIC_MWALEO_WHATSAPP_NUMBER` to the confirmed international number in digits. When it is missing or invalid, WhatsApp links are hidden. Set `NEXT_PUBLIC_MWALEO_FREE_DELIVERY_FROM` only if Mwaleo confirms a free-delivery threshold in KES. Without it, the delivery engine uses the rate from Wix.
+Check the Production Branch setting during setup. GitHub defaults to `develop`, while this project uses `main` for production. If the import screen is about to deploy a branch with the inherited storefront, wait until the Mwaleo release is ready. Set the production branch to `main` before attaching the custom domain. Vercel treats `develop` and pull request branches as previews once `main` is set.
 
-A checkout on a preview backed by the live Wix store creates a real order. Coordinate any order verification with the owner.
+## Environment variables
+
+Use [.env.example](../.env.example) as the checklist for Vercel Project Settings → Environment Variables. Add the values to Preview and Production. For local work, copy the template to `.env.local` and fill in the values there.
+
+| Name | Value and behavior |
+|---|---|
+| `NEXT_PUBLIC_WIX_CLIENT_ID` | Public OAuth client ID from Mwaleo's Wix Headless setup. Required for the Wix storefront connection, including products, member login and cart. The build can pass with this missing. |
+| `WIX_CLIENT_SECRET` | Secret for the same Wix client. Required for the Wix contact form and custom delivery fees. Store it as sensitive and keep it server-side. |
+| `FEATURED_PRODUCTS_CATEGORY_ID` | Wix Stores category ID for Customer Favourites. That section requests an unfiltered list when this is blank. |
+| `NEW_PRODUCTS_CATEGORY_ID` | Wix Stores category ID for New Products. That section requests an unfiltered list when this is blank. |
+| `NEXT_PUBLIC_MWALEO_WHATSAPP_NUMBER` | Confirmed number in international digits with no plus sign or spaces. WhatsApp links are hidden when the value is missing or invalid. |
+| `NEXT_PUBLIC_MWALEO_FREE_DELIVERY_FROM` | Approved free-delivery threshold in KES, if there is one. Leave blank to use the rate from Wix. |
+
+Add the full callback URL for each environment to the Wix Headless client's allowed redirects, for example `https://mwaleogreenenergy.co.ke/login/callback` for production. Redeploy after adding or changing Vercel variables. A checkout backed by the live Wix store creates a real order. Coordinate any order verification with the owner.
