@@ -4,20 +4,23 @@ import Filter from "@/components/Filter";
 import CategoryChips from "@/components/CategoryChips";
 import { wixClientServer } from "@/lib/wixClientServer";
 import { getPriceBounds } from "@/lib/storeProducts";
-import { ALL_PRODUCTS_SLUG, categoryHref, type CategoryPage } from "@/lib/categoryPages";
+import { ALL_PRODUCTS_SLUG, categoryHref, hasFilters, LAUNCH_CATEGORIES, type CategoryPage } from "@/lib/categoryPages";
 import { breadcrumbJsonLd, jsonLdScript } from "@/lib/seo";
 
 type Params = { [key: string]: string | string[] | undefined };
 
 // What the shop page and every category page show: the heading, the category pills, the filters and the products.
 // With no category it is the whole shop.
-const ShopListing = async ({ category, categories, searchParams }: { category: CategoryPage | null; categories: CategoryPage[]; searchParams: Params }) => {
+const ShopListing = async ({ category, categories, searchParams, pendingCategory = false }: { pendingCategory?: boolean; category: CategoryPage | null; categories: CategoryPage[]; searchParams: Params }) => {
   const searched = typeof searchParams.name === "string" ? searchParams.name.trim() : "";
-  const wixClient = await wixClientServer();
-  const bounds = await getPriceBounds((url, init) => wixClient.fetchWithAuth(url, init));
+  const wixClient = pendingCategory ? null : await wixClientServer();
+  const bounds = wixClient ? await getPriceBounds((url, init) => wixClient.fetchWithAuth(url, init)) : undefined;
 
-  // The pills come from the store's real categories, so none of them is a dead link.
-  const chips = categories.filter((c) => c.slug !== ALL_PRODUCTS_SLUG).map((c) => ({ name: c.name, slug: c.slug }));
+  // Keep launch links available before their Wix categories are created.
+  const chips = [
+    ...LAUNCH_CATEGORIES.map(({ name, slug }) => ({ name: categories.find((c) => c.slug === slug)?.name ?? name, slug })),
+    ...categories.filter((c) => c.slug !== ALL_PRODUCTS_SLUG && !LAUNCH_CATEGORIES.some(({ slug }) => slug === c.slug)),
+  ];
 
   return (
     <div className="px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 relative">
@@ -48,17 +51,27 @@ const ShopListing = async ({ category, categories, searchParams }: { category: C
 
       <CategoryChips chips={chips} activeSlug={searched ? null : category ? category.slug : ""} />
 
-      <div className="mt-6 border-y border-gray-200 py-5">
-        <Suspense fallback={<div className="h-16" />}>
-          <Filter bounds={bounds} />
-        </Suspense>
-      </div>
+      {pendingCategory ? (
+        <p className="py-10 text-gray-700">Coming soon.</p>
+      ) : (
+        <>
+          <div className="mt-6 border-y border-gray-200 py-5">
+            <Suspense fallback={<div className="h-16" />}>
+              <Filter bounds={bounds} />
+            </Suspense>
+          </div>
 
-      <div className="pb-8">
-        <Suspense fallback={<ProductListSkeleton />}>
-          <ProductList categoryId={category?.id ?? ""} searchParams={searchParams} />
-        </Suspense>
-      </div>
+          <div className="pb-8">
+            <Suspense fallback={<ProductListSkeleton />}>
+              <ProductList
+                categoryId={category?.id ?? ""}
+                searchParams={searchParams}
+                emptyMessage={!hasFilters(searchParams) && !searchParams.page ? "Coming soon." : undefined}
+              />
+            </Suspense>
+          </div>
+        </>
+      )}
     </div>
   );
 };

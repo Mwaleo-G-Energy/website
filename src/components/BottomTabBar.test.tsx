@@ -1,6 +1,11 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+vi.mock("@/lib/contact", () => ({
+  WHATSAPP_NUMBER: "254700000000",
+  WHATSAPP_URL: "https://wa.me/254700000000",
+}));
+
 const nav = vi.hoisted(() => ({ pathname: "/" }));
 vi.mock("next/navigation", () => ({
   usePathname: () => nav.pathname,
@@ -19,11 +24,11 @@ beforeEach(() => {
 describe("BottomTabBar", () => {
   it("shows the four tabs in order, as links", () => {
     const html = render();
-    const order = ["Home", "Gents", "Ladies", "Cart"].map((l) => html.indexOf(`>${l}<`));
+    const order = ["Home", "Shop", "Contact", "Cart"].map((l) => html.indexOf(`>${l}<`));
     expect(order.every((i) => i > -1)).toBe(true);
     expect([...order].sort((a, b) => a - b)).toEqual(order);
-    expect(html).toContain('href="/shop/gents-watches"');
-    expect(html).toContain('href="/shop/ladies-watches"');
+    expect(html).toContain('href="/shop"');
+    expect(html).toContain('href="/contact"');
     expect(html).toContain('href="/cart"');
   });
 
@@ -40,15 +45,15 @@ describe("BottomTabBar", () => {
   });
 
   it("marks the current page for screen readers", () => {
-    nav.pathname = "/shop/ladies-watches";
+    nav.pathname = "/shop/off-grid-inverters";
     const html = render();
     expect(html.match(/aria-current="page"/g)).toHaveLength(1);
-    const ladiesTag = html.match(/<a [^>]*href="\/shop\/ladies-watches"[^>]*>/)?.[0] ?? "";
-    expect(ladiesTag).toContain('aria-current="page"');
+    const shopTag = html.match(/<a [^>]*href="\/shop"[^>]*>/)?.[0] ?? "";
+    expect(shopTag).toContain('aria-current="page"');
   });
 
   it("marks nothing on a page that has no tab", () => {
-    nav.pathname = "/contact";
+    nav.pathname = "/return-policy";
     expect(render()).not.toContain("aria-current");
   });
 
@@ -165,7 +170,7 @@ describe("WhatsAppButton", () => {
   const html = () => renderToStaticMarkup(<WhatsAppButton />);
 
   it("opens the shop's WhatsApp chat in a new tab without giving the new page access to this one", () => {
-    expect(html()).toContain('href="https://wa.me/254796044969"');
+    expect(html()).toContain('href="https://wa.me/254700000000"');
     expect(html()).toContain('target="_blank"');
     expect(html()).toContain('rel="noopener noreferrer"');
     expect(html()).toContain('aria-label="Chat on WhatsApp (opens in a new tab)"');

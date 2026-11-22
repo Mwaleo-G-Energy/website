@@ -1,6 +1,13 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { chooseDeliveryArea, clearDelivery, listDelivery, withoutDetail, type DeliveryDeps } from "@/lib/deliveryService";
 import { areasFromRates, type DeliveryRate } from "@/lib/delivery";
+
+beforeEach(() => {
+  vi.stubEnv("NEXT_PUBLIC_MWALEO_FREE_DELIVERY_FROM", "10000");
+});
+afterEach(() => {
+  vi.unstubAllEnvs();
+});
 
 const rates: DeliveryRate[] = [
   { id: "r1", places: "UNEP / GIGIRI", road: "Limuru Road", price: 450 },

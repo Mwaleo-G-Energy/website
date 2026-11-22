@@ -2,14 +2,14 @@ import { describe, expect, it } from "vitest";
 import { TABS, activeTab } from "@/lib/tabs";
 
 describe("TABS", () => {
-  it("are Home, Gents, Ladies and Cart, in that order", () => {
-    expect(TABS.map((t) => t.label)).toEqual(["Home", "Gents", "Ladies", "Cart"]);
+  it("are Home, Shop, Contact and Cart, in that order", () => {
+    expect(TABS.map((t) => t.label)).toEqual(["Home", "Shop", "Contact", "Cart"]);
   });
 
-  it("send Gents and Ladies to the store's two watch categories", () => {
+  it("links to the catalogue, contact page and cart", () => {
     const href = (key: string) => TABS.find((t) => t.key === key)?.href;
-    expect(href("gents")).toBe("/shop/gents-watches");
-    expect(href("ladies")).toBe("/shop/ladies-watches");
+    expect(href("shop")).toBe("/shop");
+    expect(href("contact")).toBe("/contact");
     expect(href("cart")).toBe("/cart");
   });
 
@@ -21,19 +21,18 @@ describe("TABS", () => {
 describe("activeTab", () => {
   it("marks Home only on the homepage", () => {
     expect(activeTab("/")).toBe("home");
-    expect(activeTab("/contact")).toBeNull();
+    expect(activeTab("/return-policy")).toBeNull();
   });
 
-  it("marks Gents and Ladies on their own category pages", () => {
-    expect(activeTab("/shop/gents-watches")).toBe("gents");
-    expect(activeTab("/shop/ladies-watches")).toBe("ladies");
-    expect(activeTab("/list")).toBeNull(); // the old address only redirects
+  it("marks Shop for the catalogue and its categories", () => {
+    expect(activeTab("/shop")).toBe("shop");
+    expect(activeTab("/shop/off-grid-inverters")).toBe("shop");
+    expect(activeTab("/shopper-guide")).toBeNull();
+    expect(activeTab("/list")).toBeNull();
   });
 
-  it("marks nothing on other categories or on the whole shop", () => {
-    expect(activeTab("/shop/naviforce-watches-kenya")).toBeNull();
-    expect(activeTab("/shop")).toBeNull();
-    expect(activeTab("/shop/gents-watches-extra")).toBeNull();
+  it("marks Contact on the contact page", () => {
+    expect(activeTab("/contact")).toBe("contact");
   });
 
   it("marks Cart on the cart page", () => {

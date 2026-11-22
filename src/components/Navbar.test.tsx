@@ -28,7 +28,7 @@ describe("Navbar on a phone", () => {
   it("puts the menu button on the left, before the logo", () => {
     const html = phoneHeader();
     const menu = html.indexOf('aria-label="Open menu"');
-    const logo = html.indexOf('alt="Watch Fusion Kenya"');
+    const logo = html.indexOf('alt="Mwaleo Green Energy"');
     expect(menu).toBeGreaterThan(-1);
     expect(logo).toBeGreaterThan(menu);
   });
@@ -37,7 +37,7 @@ describe("Navbar on a phone", () => {
     const html = phoneHeader();
     const grid = html.indexOf("grid-cols-[1fr_auto_1fr]");
     const menu = html.indexOf('aria-label="Open menu"');
-    const logo = html.indexOf('alt="Watch Fusion Kenya"');
+    const logo = html.indexOf('alt="Mwaleo Green Energy"');
     const cart = html.indexOf('aria-label="Cart"');
     expect(grid).toBeGreaterThan(-1);
     expect(menu).toBeGreaterThan(grid);
@@ -45,34 +45,15 @@ describe("Navbar on a phone", () => {
     expect(cart).toBeGreaterThan(logo);
   });
 
-  it("shows the logo without its small slogan, cropped from the picture so the name can be bigger", () => {
+  it("fits the entire Mwaleo lockup at its native aspect ratio", () => {
     const html = phoneHeader();
-    const wrapper = html.match(/<span class="([^"]*)"[^>]*><img[^>]*alt="Watch Fusion Kenya"/)?.[1].split(" ") ?? [];
-    expect(wrapper).toContain("h-9");
-    expect(wrapper).toContain("overflow-hidden");
-    expect(wrapper).toContain("aspect-[2209/823]");
-    const img = html.match(/<img[^>]*alt="Watch Fusion Kenya"[^>]*>/)?.[0] ?? "";
-    expect(img).toContain("object-cover");
-    expect(img).toContain("object-top");
-  });
-
-  it("starts the crop at the very top of the picture so the ring on the W is not cut off, and ends it above the slogan", () => {
-    // the picture is 2209 x 937: the ring starts at row 0, the name ends at row 806, the slogan starts at row 840
-    const html = renderToStaticMarkup(<Navbar />);
-    const crops = html.match(/aspect-\[(\d+)\/(\d+)\]/g) ?? [];
-    expect(crops.length).toBeGreaterThanOrEqual(2);
-    for (const crop of crops) {
-      const [, w, h] = crop.match(/\[(\d+)\/(\d+)\]/) ?? [];
-      const rowsShown = (Number(h) / Number(w)) * 2209;
-      expect(Number(w)).toBe(2209);
-      expect(rowsShown).toBeGreaterThan(806);
-      expect(rowsShown).toBeLessThan(840);
-    }
-    expect(html).not.toMatch(/object-\[50%_44%\]/);
+    expect(html).toContain("h-[50px]");
+    expect(html).toContain("aspect-[970/400]");
+    expect(html).toMatch(/<img[^>]*alt="Mwaleo Green Energy"[^>]*object-contain/);
   });
 
   it("gives the logo link a tap area at least 44 px tall", () => {
-    const link = phoneHeader().match(/<a[^>]*href="\/"[^>]*>(?=<span[^>]*><img[^>]*alt="Watch Fusion Kenya")/)?.[0] ?? "";
+    const link = phoneHeader().match(/<a[^>]*href="\/"[^>]*>(?=<span[^>]*><img[^>]*alt="Mwaleo Green Energy")/)?.[0] ?? "";
     expect(link).not.toBe("");
     expect(link.match(/class="([^"]*)"/)?.[1].split(" ")).toContain("h-11");
   });
@@ -83,7 +64,8 @@ describe("Navbar on a phone", () => {
 
   it("shows a search field under the logo row", () => {
     const html = phoneHeader();
-    expect(html.indexOf('name="name"')).toBeGreaterThan(html.indexOf('alt="Watch Fusion Kenya"'));
+    expect(html).toContain('aria-label="Search solar equipment"');
+    expect(html.indexOf('name="name"')).toBeGreaterThan(html.indexOf('alt="Mwaleo Green Energy"'));
   });
 
   it("slides the menu in from the left and casts no shadow while it is closed", () => {
@@ -109,7 +91,7 @@ describe("Navbar on a phone", () => {
   it("puts a visible dark mode switch in the phone header, next to the cart", () => {
     const html = phoneHeader();
     const toggle = html.lastIndexOf('aria-label="Dark mode"');
-    expect(toggle).toBeGreaterThan(html.indexOf('alt="Watch Fusion Kenya"'));
+    expect(toggle).toBeGreaterThan(html.indexOf('alt="Mwaleo Green Energy"'));
     expect(toggle).toBeLessThan(html.indexOf('aria-label="Cart"'));
   });
 
@@ -134,27 +116,27 @@ describe("Navbar on a phone", () => {
     expect((desktop.match(/<img[^>]*dark:invert[^>]*>/g) ?? []).length).toBeGreaterThanOrEqual(4);
   });
 
-  it("gives the logo a soft gold glow in the dark theme, where it sits straight on the black page", () => {
-    const dark = (markup: string) => markup.match(/<img[^>]*%2Flogo\.png[^>]*>/)?.[0] ?? "";
-    expect(dark(phoneHeader())).toMatch(/dark:drop-shadow-\[/);
-    const html = renderToStaticMarkup(<Navbar />);
-    const desktop = dark(html.slice(html.indexOf('data-testid="desktop-header"')));
-    expect(desktop).toMatch(/dark:drop-shadow-\[/);
-    expect(desktop).toContain("object-cover");
+  it("uses the supplied reverse logo without visual effects in dark mode", () => {
+    const logos = renderToStaticMarkup(<Navbar />).match(/<img[^>]*class="[^"]*dark:block[^"]*"[^>]*>/g) ?? [];
+    expect(logos).toHaveLength(2);
+    for (const logo of logos) {
+      expect(logo).toContain("/mwaleo-logo-horizontal-reverse.svg");
+      expect(logo).not.toContain("drop-shadow");
+    }
   });
 
   it("shows the logo straight on the page, with no black box behind it, in both themes", () => {
     expect(renderToStaticMarkup(<Navbar />)).not.toContain("bg-brand-black");
   });
 
-  it("has a version of the logo with black lettering for the light theme and the white-lettered one for the dark theme, on the phone and the computer", () => {
+  it("has the supplied logo lockups for light and dark mode, on the phone and the computer", () => {
     const html = renderToStaticMarkup(<Navbar />);
     const desktopAt = html.indexOf('data-testid="desktop-header"');
     for (const part of [html.slice(0, desktopAt), html.slice(desktopAt)]) {
-      const light = part.match(/<img[^>]*%2Flogo-on-light\.png[^>]*>/)?.[0] ?? "";
-      const dark = part.match(/<img[^>]*%2Flogo\.png[^>]*>/)?.[0] ?? "";
+      const light = part.match(/<img[^>]*mwaleo-logo-horizontal\.svg[^>]*>/)?.[0] ?? "";
+      const dark = part.match(/<img[^>]*mwaleo-logo-horizontal-reverse\.svg[^>]*>/)?.[0] ?? "";
       expect(light).toContain("dark:hidden");
-      expect(light).toContain('alt="Watch Fusion Kenya"');
+      expect(light).toContain('alt="Mwaleo Green Energy"');
       expect(dark).toMatch(/\bhidden\b/);
       expect(dark).toContain("dark:block");
       expect(dark).toContain('alt=""');
@@ -166,13 +148,13 @@ describe("Navbar on a phone", () => {
     const desktopAt = html.indexOf('data-testid="desktop-header"');
     for (const part of [html.slice(0, desktopAt), html.slice(desktopAt)]) {
       const link = part.match(/<a [^>]*href="\/"[^>]*>(?=<span[^>]*><img)/)?.[0] ?? "";
-      expect(link).toContain('aria-label="Watch Fusion Kenya, home"');
+      expect(link).toContain('aria-label="Mwaleo Green Energy, home"');
     }
   });
 
   it("loads whichever logo is shown straight away, without preloading the hidden one", () => {
     const html = renderToStaticMarkup(<Navbar />);
-    const logos = html.match(/<img[^>]*%2Flogo(?:-on-light)?\.png[^>]*>/g) ?? [];
+    const logos = html.match(/<img[^>]*mwaleo-logo-horizontal(?:-reverse)?\.svg[^>]*>/g) ?? [];
     expect(logos).toHaveLength(4);
     for (const logo of logos) expect(logo).toContain('loading="eager"');
     expect(html).not.toMatch(/<link[^>]*rel="preload"[^>]*logo/);
@@ -250,7 +232,7 @@ describe("Navbar on a computer", () => {
 
   it("holds the logo, the search and the icons, and no page links, which now live in the More menu of the category row", () => {
     const html = desktop();
-    expect(html).toContain('aria-label="Watch Fusion Kenya, home"');
+    expect(html).toContain('aria-label="Mwaleo Green Energy, home"');
     for (const href of ["/shop", "/deals", "/gift-vouchers", "/contact"]) expect(html).not.toContain(`href="${href}"`);
     expect(html).not.toMatch(/>Homepage</);
   });
@@ -268,21 +250,21 @@ describe("the menu button on a computer", () => {
     expect(desktop("/")).not.toContain('aria-label="Open menu"');
   });
 
-  it("is shown beside the logo on every other page, so Deals, Gift Vouchers and the categories are one click away", () => {
+  it("is shown beside the logo on every other page, so Deals and the categories are one click away", () => {
     for (const path of ["/shop", "/deals", "/cart", "/gift-vouchers", "/some-product"]) {
       const html = desktop(path);
       expect(html.indexOf('aria-label="Open menu"')).toBeGreaterThan(-1);
-      expect(html.indexOf('aria-label="Open menu"')).toBeLessThan(html.indexOf('alt="Watch Fusion Kenya"'));
+      expect(html.indexOf('aria-label="Open menu"')).toBeLessThan(html.indexOf('alt="Mwaleo Green Energy"'));
     }
   });
 });
 
 describe("the menu drawer's pages", () => {
-  it("lists Deals and Gift Vouchers, and not the Homepage and Contact links the row's More menu also leaves out", () => {
+  it("lists Deals and omits the Homepage and Contact links the row's More menu also leaves out", () => {
     const html = phoneHeader();
     const drawer = html.slice(html.indexOf('role="dialog"'));
     expect(drawer).toContain('href="/deals"');
-    expect(drawer).toContain('href="/gift-vouchers"');
+    expect(drawer).not.toContain('href="/gift-vouchers"');
     expect(drawer).not.toContain('href="/contact"');
     expect(drawer).not.toMatch(/>Homepage</);
   });

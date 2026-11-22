@@ -26,9 +26,9 @@ const SearchBar = () => {
       <input
         type="text"
         name="name"
-        placeholder="Search watches"
-        aria-label="Search watches"
-        className="flex-1 bg-transparent outline-none"
+        placeholder="Search solar equipment"
+        aria-label="Search solar equipment"
+        className="min-w-0 flex-1 bg-transparent outline-none"
       />
       <button className="cursor-pointer" aria-label="Search">
         <Image src="/search.png" alt="" width={16} height={16} className="dark:invert" />

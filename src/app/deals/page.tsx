@@ -5,7 +5,7 @@ import { Suspense } from "react";
 
 export const metadata = {
     title: "Deals",
-    description: "Watches and gifts on offer at Watch Fusion Kenya right now, with the sale price shown beside the usual one.",
+    description: "Browse current offers on solar equipment at Mwaleo Green Energy.",
     alternates: { canonical: "/deals" },
     openGraph: pageShare("/deals"),
 };
@@ -25,7 +25,7 @@ export default async function DealsPage({
                 <div className="rounded-2xl bg-brand-panel p-8 text-white md:p-12">
                     <h1 className="font-display text-4xl font-bold md:text-5xl">Deals</h1>
                     <p className="mt-3 max-w-xl text-base text-white/80 md:text-lg">
-                        Watches and gifts on offer right now. The offers change often, so check back.
+                        Current offers on solar equipment.
                     </p>
                     <Link
                         href="/shop"

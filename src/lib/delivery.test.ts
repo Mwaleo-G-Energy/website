@@ -1,7 +1,6 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   DELIVERY_PREFIX,
-  FREE_DELIVERY_FROM,
   areasFromRates,
   feeToRefresh,
   goodsTotal,
@@ -14,6 +13,13 @@ import {
   searchAreas,
   type DeliveryRate,
 } from "@/lib/delivery";
+
+beforeEach(() => {
+  vi.stubEnv("NEXT_PUBLIC_MWALEO_FREE_DELIVERY_FROM", "10000");
+});
+afterEach(() => {
+  vi.unstubAllEnvs();
+});
 
 const rates: DeliveryRate[] = [
   { id: "r1", places: "NYAYO STADIUM / BUNYALA", road: "Mombasa Road", price: 250 },
@@ -135,7 +141,6 @@ describe("needsDeliveryArea", () => {
 
 describe("free delivery", () => {
   it("starts at Ksh 10,000 of goods: exactly 10,000 is free, and so is anything over", () => {
-    expect(FREE_DELIVERY_FROM).toBe(10000);
     expect(isFreeDelivery(9999.99)).toBe(false);
     expect(isFreeDelivery(10000)).toBe(true);
     expect(isFreeDelivery(10000.01)).toBe(true);
@@ -198,4 +203,11 @@ describe("feeToRefresh", () => {
   it("does nothing when the fee's price cannot be read", () => {
     expect(feeToRefresh([watch("20000"), fee("n/a")], areas)).toBeNull();
   });
+});
+
+it("does not apply free delivery without a confirmed threshold", () => {
+  for (const threshold of [undefined, "", "0", "-1", "invalid"]) {
+    vi.stubEnv("NEXT_PUBLIC_MWALEO_FREE_DELIVERY_FROM", threshold);
+    expect(isFreeDelivery(100_000)).toBe(false);
+  }
 });

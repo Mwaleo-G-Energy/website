@@ -1,33 +1,31 @@
 # How a change reaches the live site
 
-Two long-lived branches:
+`develop` is the preview branch. `main` is the production branch for `mwaleogreenenergy.co.ke`.
 
-- `main` is the live site. www.watchfusionkenya.com is built from it.
-- `develop` is the preview. Every change lands here first. Vercel builds it on its own address, `https://watchfusionke-git-develop-watch-fusion-ke.vercel.app`, which always shows the latest `develop`.
+1. Branch from `develop` and open a draft pull request into it.
+2. Run lint, type-check, tests, and build. Review the pull request in a fresh session once CI is green, then merge it with a merge commit.
+3. Ask the owner to review the Vercel preview. Use the URL for the Mwaleo Vercel project.
+4. Open a release pull request from `develop` into `main` after the owner approves the preview.
 
-Both branches are protected on GitHub: they cannot be deleted or force-pushed, and the automatic checks must pass before a merge. This also keeps the setting that deletes a pull request's branch after merging from deleting `develop` when it is released into `main`.
+For a production hotfix, open the pull request into `main`, then merge `main` back into `develop` through a pull request.
 
-## Steps
+## Connect the GitHub repo to Vercel
 
-1. Work on a short branch (`feat/...`, `fix/...`, `chore/...`) cut from `develop`.
-2. Open a pull request into `develop`. The checks (lint, type check, tests, build) must pass and the change is reviewed.
-3. Merge into `develop` with a merge commit. The preview address updates within a few minutes.
-4. The owner looks at the preview and approves.
-5. Open one pull request from `develop` into `main` that lists the changes it carries. Merge it with a merge commit. Vercel then publishes the live site.
-6. A fix that cannot wait goes into `main` through its own pull request. Straight after, open a pull request from `main` into `develop` and merge it, so `develop` has the fix too and the two do not drift apart. The fix is then visible on the preview as well.
+Import `Mwaleo-G-Energy/website` into the Mwaleo Vercel project. Use the Next.js preset, the repository root, and Node.js 22 to match CI. Keep the preset’s build and output settings.
 
-## Showing a preview to the owner
+Check the Production Branch setting during setup. GitHub defaults to `develop`, while this project uses `main` for production. If the import screen is about to deploy a branch with the inherited storefront, wait until the Mwaleo release is ready. Set the production branch to `main` before attaching the custom domain. Vercel treats `develop` and pull request branches as previews once `main` is set.
 
-Vercel asks for a Vercel login on every preview address. The owner has no Vercel account, so do one of these in the Vercel project:
+## Environment variables
 
-- Settings, Deployment Protection, "Deployment Protection Exceptions", Add Domain. Enter `watchfusionke-git-develop-watch-fusion-ke.vercel.app`. That address becomes public for anyone who has the link, and stays so until the exception is removed. Available on all Vercel plans, including Hobby.
-- Or create a Shareable Link for the `develop` branch in the same settings area. The link carries a secret in the address, and the address can be revoked.
+Use [.env.example](../.env.example) as the checklist for Vercel Project Settings → Environment Variables. Add the values to Preview and Production. For local work, copy the template to `.env.local` and fill in the values there.
 
-Vercel marks every preview with `X-Robots-Tag: noindex`, so search engines do not list it, whichever option is used.
+| Name | Value and behavior |
+|---|---|
+| `NEXT_PUBLIC_WIX_CLIENT_ID` | Public OAuth client ID from Mwaleo's Wix Headless setup. Required for the Wix storefront connection, including products, member login and cart. The build can pass with this missing. |
+| `WIX_CLIENT_SECRET` | Secret for the same Wix client. Required for the Wix contact form and custom delivery fees. Store it as sensitive and keep it server-side. |
+| `FEATURED_PRODUCTS_CATEGORY_ID` | Wix Stores category ID for Customer Favourites. The homepage hides this section when the ID is blank. |
+| `NEW_PRODUCTS_CATEGORY_ID` | Wix Stores category ID for New Products. The homepage hides this section when the ID is blank. |
+| `NEXT_PUBLIC_MWALEO_WHATSAPP_NUMBER` | Confirmed number in international digits with no plus sign or spaces. WhatsApp links are hidden when the value is missing or invalid. |
+| `NEXT_PUBLIC_MWALEO_FREE_DELIVERY_FROM` | Approved free-delivery threshold in KES, if there is one. Leave blank to use the rate from Wix. |
 
-## Things to know
-
-- The preview uses the live store. Adding to the cart works the same, and an order placed from the preview is a real order. Checkout also sends the shopper back to the live site, because the return addresses are fixed to www.watchfusionkenya.com in `src/components/CartModal.tsx` and `src/app/cart/page.tsx`.
-- Everything in `develop` goes live together. To hold a change back, keep it out of `develop` until it is approved.
-- The Wix settings for the build (client ID, app ID, featured category and new-products category) must exist for Vercel's Preview environment as well as Production. Check all four in the Vercel project settings. A build succeeds even when one is missing, so a green build does not prove they are set.
-- Signing in and registering on a preview has not been tried. The Wix app lists only the live addresses as allowed, so it may need a setting there.
+Add the full callback URL for each environment to the Wix Headless client's allowed redirects, for example `https://mwaleogreenenergy.co.ke/login/callback` for production. Redeploy after adding or changing Vercel variables. A checkout backed by the live Wix store creates a real order. Coordinate any order verification with the owner.

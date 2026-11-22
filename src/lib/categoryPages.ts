@@ -17,6 +17,17 @@ export type CategoryPage = {
   seoDescription: string | null;
 };
 
+export const LAUNCH_CATEGORIES = [
+  { slug: "off-grid-inverters", name: "Off-grid inverters", description: "Inverter chargers for solar and backup power." },
+  { slug: "lithium-batteries", name: "Lithium batteries", description: "Battery storage for compatible solar systems." },
+  { slug: "solar-kits", name: "Solar kits", description: "Matched equipment for a complete off-grid system." },
+] as const;
+
+export const pendingLaunchCategory = (slug: string): CategoryPage | undefined => {
+  const category = LAUNCH_CATEGORIES.find((item) => item.slug === slug);
+  return category && { ...category, id: "", seoTitle: null, seoDescription: null };
+};
+
 export type SeoTag = { type?: string; children?: string; props?: { name?: string; content?: string }; disabled?: boolean };
 type WixCategory = { id?: string; name?: string; slug?: string; description?: string; seoData?: { tags?: SeoTag[] } };
 
@@ -57,7 +68,7 @@ export const categoryTitle = (category: CategoryPage): string | { absolute: stri
   category.seoTitle ? { absolute: category.seoTitle } : category.name;
 
 export const categoryDescription = (category: CategoryPage): string =>
-  category.seoDescription || category.description || `Shop ${category.name} at Watch Fusion Kenya, with delivery across Nairobi and Kenya.`;
+  category.seoDescription || category.description || `Shop ${category.name} from Mwaleo Green Energy in Nairobi.`;
 
 // Categories the shop has taken down, and where an old link to each now goes. Google still lists some of these pages, so a visitor who
 // follows one lands somewhere useful, not on "not found". A category the store shows again is shown, not redirected.

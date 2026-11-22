@@ -37,10 +37,10 @@ describe("DeliveryPickerView", () => {
     expect(html.split('role="listbox"')[1]).not.toContain("Kilimani");
   });
 
-  it("says when nothing matches and offers WhatsApp for an area that is not listed", () => {
+  it("says when nothing matches and links to the contact page when WhatsApp is unavailable", () => {
     const html = view({ query: "zzzz" });
     expect(html).toMatch(/No area matches/i);
-    expect(html).toContain("wa.me");
+    expect(html).toContain('href="/contact"');
   });
 
   it("once an area is chosen, shows it with its fee and a way to change it, instead of the search", () => {

@@ -34,7 +34,7 @@ describe("page titles", () => {
 describe("the picture shown when a link to the shop is shared", () => {
   const layout = read("src/app/layout.tsx");
 
-  it("is a card of its own on the brand navy, not the white-lettered logo, which is invisible on a white link card", () => {
+  it("uses a dedicated share card for social previews", () => {
     expect(layout).not.toMatch(/images:\s*\[\s*\{\s*url:\s*"\/logo\.png"/);
     expect(layout).not.toMatch(/images:\s*\["\/logo\.png"\]/);
     expect(layout).toContain('url: "/share-image.png"');
@@ -60,11 +60,11 @@ describe("the shop's name", () => {
       e.isDirectory() ? files(`${dir}/${e.name}`) : /\.(ts|tsx)$/.test(e.name) && !/\.test\./.test(e.name) ? [`${dir}/${e.name}`] : []
     );
 
-  it("is spelled Watch Fusion Kenya in every title, link preview and structured-data line the site makes", () => {
+  it("is spelled Mwaleo Green Energy in every title, link preview and structured-data line the site makes", () => {
     const wrong = files("src").filter((f) => /WatchFusion Kenya|WatchFusionKe/.test(readFileSync(f, "utf8")));
     expect(wrong).toEqual([]);
     expect(read("src/lib/site.ts")).not.toContain("SITE_ALTERNATE_NAMES");
-    expect(read("src/lib/site.ts")).toContain('export const SITE_NAME = "Watch Fusion Kenya";');
+    expect(read("src/lib/site.ts")).toContain('export const SITE_NAME = "Mwaleo Green Energy";');
   });
 
   it("is written in the page language of Kenya, and the layout leaves each page's own title and description to its link preview", () => {
@@ -108,34 +108,32 @@ describe("structured data", () => {
 describe("the home page's title and description", () => {
   const layout = read("src/app/layout.tsx");
 
-  it("are the wording the shop asked for: authentic watches in Nairobi, free delivery on orders above Ksh 10,000", () => {
-    expect(layout).toContain("default: `Authentic Watches in Nairobi Kenya | Free Deliveries on Orders above Ksh 10,000`");
-    expect(layout).toContain(
-      "`Shop authentic watches and premium gift packages at ${SITE_NAME}. Personalize your gift with custom engraving and enjoy same-day delivery and FREE delivery on orders above KSh 10,000.`"
-    );
+  it("uses confirmed business details in the shared title and description", async () => {
+    const { SITE_DESCRIPTION } = await import("@/lib/site");
+    expect(layout).toContain('default: `${SITE_NAME} | Felicity Solar in Nairobi`');
+    expect(layout).toContain("description: SITE_DESCRIPTION");
+    expect(SITE_DESCRIPTION).toContain("Authorised Felicity Solar dealer in Nairobi CBD");
+    expect(SITE_DESCRIPTION).not.toMatch(/watch|engraving|free delivery/i);
   });
+});
 
-  it("no longer use the old wording", () => {
-    expect(layout).not.toContain("Premium Watches in Nairobi");
-    expect(layout).not.toContain("Shop premium watches in Kenya");
+describe("home storefront", () => {
+  it("introduces the solar range and links to the shop", () => {
+    const home = read("src/app/page.tsx");
+    expect(home).toContain("Off-grid solar and backup power");
+    expect(home).toContain('href="/shop"');
+    expect(home).not.toContain("<Slider");
+    expect(home).toContain("/solar/felicity-ivem6048-ii.png");
+    expect(home).toContain("LAUNCH_CATEGORIES.map");
+    expect(home.indexOf("Shop by category")).toBeGreaterThan(home.indexOf("Off-grid solar and backup power"));
+    expect(home).toContain("categoryId &&");
   });
+});
 
-  it("list the words people search for: the shop's brands, gifts, engraving and delivery, with Nairobi and Kenya", () => {
-    const layout = read("src/app/layout.tsx");
-    const keywords = layout.slice(layout.indexOf("keywords: ["), layout.indexOf("authors:"));
-    for (const term of ["Casio watches Nairobi", "Naviforce watches Kenya", "gift packages Nairobi", "custom engraved watch Kenya", "same day delivery Nairobi", "original watches Nairobi", "watch shop Nairobi"]) {
-      expect(keywords).toContain(term);
-    }
-  });
-
-  it("name only gift pages the shop has live, so it does not advertise ones that do not exist yet", () => {
-    const layout = read("src/app/layout.tsx");
-    const keywords = layout.slice(layout.indexOf("keywords: ["), layout.indexOf("authors:"));
-    for (const term of ["corporate gifts", "birthday gifts", "Valentine"]) expect(keywords).not.toContain(term);
-  });
-
-  it("promise the delivery the cart gives: free from Ksh 10,000, which the code states as 10,000", async () => {
-    const { FREE_DELIVERY_FROM } = await import("@/lib/delivery");
-    expect(FREE_DELIVERY_FROM).toBe(10000);
+describe("retired storefront pages", () => {
+  it("sends former gift-voucher and returns links to active Mwaleo pages", () => {
+    const config = read("next.config.mjs");
+    expect(config).toMatch(/source: "\/gift-vouchers", destination: "\/shop"/);
+    expect(config).toMatch(/source: "\/return-policy", destination: "\/contact"/);
   });
 });

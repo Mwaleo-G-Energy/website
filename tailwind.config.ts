@@ -15,8 +15,8 @@ const config: Config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       fontFamily: {
-        sans: ["var(--font-jost)", "ui-sans-serif", "system-ui", "sans-serif"],
-        display: ["var(--font-display)", "Georgia", "serif"],
+        sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       colors: {
         // The greys read their values from CSS variables, so the dark theme flips every grey on the site at once.
@@ -25,11 +25,11 @@ const config: Config = {
         ),
         brand: {
           gold: "rgb(var(--gold-rgb) / <alpha-value>)",
-          "gold-dark": "#DCA918",
-          black: "#0A0A0A",
-          navy: "#1E2235",
-          panel: "#1E2235",
-          cream: "#FAF7F0",
+          "gold-dark": "var(--sun-hover)",
+          black: "var(--ink)",
+          navy: "var(--ink)",
+          panel: "var(--ink)",
+          cream: "var(--stone)",
         },
       },
     },

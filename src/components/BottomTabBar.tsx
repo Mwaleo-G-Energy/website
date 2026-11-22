@@ -1,15 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import { MessageSquare, Store } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useCartStore } from "@/hooks/useCartStore";
 import { TABS, activeTab, type TabKey } from "@/lib/tabs";
-import { TabBagIcon, TabGentsIcon, TabHomeIcon, TabLadiesIcon } from "@/components/icons";
+import { TabBagIcon, TabHomeIcon } from "@/components/icons";
 
 const ICONS: Record<TabKey, (props: { className?: string }) => JSX.Element> = {
   home: TabHomeIcon,
-  gents: TabGentsIcon,
-  ladies: TabLadiesIcon,
+  shop: (props) => <Store {...props} strokeWidth={1.5} strokeLinecap="square" />,
+  contact: (props) => <MessageSquare {...props} strokeWidth={1.5} strokeLinecap="square" />,
   cart: TabBagIcon,
 };
 

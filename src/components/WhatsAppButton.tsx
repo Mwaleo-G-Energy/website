@@ -7,6 +7,7 @@ import { hideWhileScrolling } from "@/lib/scrollHider";
 
 // The icon itself. `hidden` fades it out and makes it untouchable.
 export const WhatsAppButtonView = ({ hidden }: { hidden: boolean }) => {
+  if (!WHATSAPP_URL) return null;
   return (
     <a
       href={WHATSAPP_URL}
@@ -32,7 +33,7 @@ const WhatsAppButton = () => {
   const [hidden, setHidden] = useState(false);
   const pathname = usePathname();
   useEffect(() => {
-    if (pathname !== "/gift-vouchers") return hideWhileScrolling(window, setHidden);
+    if (WHATSAPP_URL && pathname !== "/gift-vouchers") return hideWhileScrolling(window, setHidden);
   }, [pathname]);
   if (pathname === "/gift-vouchers") return null;
   return <WhatsAppButtonView hidden={hidden} />;

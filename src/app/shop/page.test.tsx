@@ -111,7 +111,7 @@ describe("Shop page metadata", () => {
 
   it("is the shop's own title, description and address", async () => {
     const m = await meta();
-    expect(m.title).toBe("Shop watches");
+    expect(m.title).toBe("Shop solar equipment");
     expect(String(m.description).length).toBeGreaterThan(40);
     expect(m.alternates?.canonical).toBe("/shop");
   });

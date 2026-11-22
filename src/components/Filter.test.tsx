@@ -160,10 +160,10 @@ describe("Filter price slider", () => {
 });
 
 describe("slider handle colours", () => {
-  it("have their own colours in both themes, whether or not the theme variables exist", () => {
+  it("use neutral brand colours in both themes", () => {
     const css = require("node:fs").readFileSync("src/app/globals.css", "utf8") as string;
-    expect(css).toMatch(/--range-thumb,\s*#1e2235/);
-    expect(css).toMatch(/\.dark \.price-range\s*{[^}]*--range-thumb:\s*#ffffff/);
+    expect(css).toMatch(/--range-thumb,\s*var\(--ink\)/);
+    expect(css).toMatch(/\.dark \.price-range\s*{[^}]*--range-thumb:\s*var\(--on-ink\)/);
     const start = css.indexOf("Price slider");
     const slider = css.slice(start, css.indexOf("--range-ring", css.indexOf(".dark .price-range")) + 40);
     expect(slider).not.toMatch(/f9c92b|var\(--gold/i);

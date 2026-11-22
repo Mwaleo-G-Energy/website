@@ -75,29 +75,42 @@ const toHex = (triplet: string) => "#" + triplet.split(/\s+/).map((v) => Number(
 const css = readFileSync("src/app/globals.css", "utf8");
 const block = (selector: RegExp) => css.match(selector)?.[1] ?? "";
 const vars = (text: string) => Object.fromEntries(Array.from(text.matchAll(/--([\w-]+):\s*([^;]+);/g)).map((m) => [m[1], m[2].trim()]));
-const light = vars(block(/:root\s*{([^}]*)}/));
-const dark = vars(block(/\.dark\s*{([^}]*)}/));
+const base = vars(block(/:root\s*{([^}]*)}/));
 
-describe("dark colours", () => {
-  it("keep every grey of the light theme exactly as it was", () => {
-    const tailwindDefaults: Record<string, string> = {
-      "gray-50": "249 250 251", "gray-100": "243 244 246", "gray-200": "229 231 235", "gray-300": "209 213 219",
-      "gray-400": "156 163 175", "gray-500": "107 114 128", "gray-600": "75 85 99", "gray-700": "55 65 81",
-      "gray-800": "31 41 55", "gray-900": "17 24 39",
-    };
-    for (const [name, value] of Object.entries(tailwindDefaults)) expect(light[name]).toBe(value);
+const resolve = (values: Record<string, string>) =>
+  Object.fromEntries(Object.entries(values).map(([name, value]) => {
+    const token = value.match(/^var\(--([\w-]+)\)$/)?.[1];
+    return [name, token ? values[token] : value];
+  }));
+
+const light = resolve(base);
+const dark = resolve({ ...base, ...vars(block(/\.dark\s*{([^}]*)}/)) });
+
+describe("Mwaleo palette", () => {
+  it("uses the brand foundations in both themes", () => {
+    expect(light).toMatchObject({
+      page: "#ffffff",
+      card: "#f5f4f0",
+      text: "#14181b",
+      sun: "#f9a11b",
+      "sun-hover": "#e58e07",
+      leaf: "#0a9442",
+    });
+    expect(dark).toMatchObject({
+      page: "#14181b",
+      surface: "#1f2428",
+      text: "#ffffff",
+    });
   });
 
-  it("match the logo's black for the page and keep text readable (at least 7 to 1)", () => {
-    expect(dark.page.toLowerCase()).toBe("#0a0a0a");
-    expect(contrast(dark.text, dark.page)).toBeGreaterThanOrEqual(7);
-    expect(contrast(dark.text, dark.surface)).toBeGreaterThanOrEqual(7);
-    expect(contrast(dark.text, dark.card)).toBeGreaterThanOrEqual(7);
-  });
-
-  it("let the gold stand out on the dark page, and dark text sit on gold buttons", () => {
-    expect(contrast(dark.gold, dark.page)).toBeGreaterThanOrEqual(7);
-    expect(contrast(dark["on-gold"], dark.gold)).toBeGreaterThanOrEqual(7);
+  it("keeps body text and primary buttons readable in both themes", () => {
+    for (const theme of [light, dark]) {
+      for (const surface of [theme.page, theme.surface, theme.card]) {
+        expect(contrast(theme.text, surface)).toBeGreaterThanOrEqual(7);
+      }
+      expect(contrast(theme["on-gold"], theme.sun)).toBeGreaterThanOrEqual(7);
+      expect(contrast(theme["on-gold"], theme["sun-hover"])).toBeGreaterThanOrEqual(4.5);
+    }
   });
 
   it("keep grey text readable on every dark surface it sits on (at least 4.5 to 1)", () => {
@@ -174,13 +187,8 @@ describe("navy hover text", () => {
   });
 });
 
-describe("calm gold in the dark theme", () => {
+describe("primary and secondary colours in dark mode", () => {
   const hexToTriplet = (hex: string) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16)).join(" ");
-
-  it("is a softer gold than the bright yellow of the light theme, and still clearly readable on black", () => {
-    expect(dark.gold.toLowerCase()).not.toBe(light.gold.toLowerCase());
-    expect(contrast(dark.gold, dark.page)).toBeGreaterThanOrEqual(7);
-  });
 
   it("is the same colour whether a rule uses the hex or the Tailwind colour", () => {
     expect(dark["gold-rgb"]).toBe(hexToTriplet(dark.gold));
@@ -196,12 +204,11 @@ describe("calm gold in the dark theme", () => {
     expect(css).not.toMatch(/box-shadow:\s*0 0 \d+px rgb\(\s*(249|226)/);
   });
 
-  it("draws buttons that were navy as a thin gold outline with gold text, filling with gold only on hover", () => {
+  it("uses an outlined neutral secondary action", () => {
     const rule = css.match(/\.dark \.bg-brand-navy\s*{([^}]*)}/)?.[1] ?? "";
-    expect(rule).toMatch(/color:\s*var\(--gold\)/);
+    expect(rule).toMatch(/color:\s*var\(--text\)/);
     expect(rule).toMatch(/box-shadow:\s*inset 0 0 0 1px/);
-    expect(rule).not.toMatch(/background-color:\s*var\(--gold\)/);
-    expect(css).toMatch(/\.dark \.bg-brand-navy:hover[^{]*{[^}]*background-color:\s*var\(--gold\)/);
+    expect(contrast(toHex(dark["gray-400"]), dark.surface)).toBeGreaterThanOrEqual(3);
   });
 
   it("shows prices and link text in the soft white, keeping gold for the accents", () => {

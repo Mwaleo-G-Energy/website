@@ -79,6 +79,15 @@ describe("a category page", () => {
     expect(html).not.toContain('href="/shop/all-products"');
   });
 
+  it("shows an unconfigured launch category without querying the unfiltered catalogue", async () => {
+    productList.mockClear();
+    const html = await render("off-grid-inverters");
+    expect(html).toContain("Off-grid inverters");
+    expect(html).toContain("Coming soon.");
+    expect(productList).not.toHaveBeenCalled();
+    expect(await generateMetadata(props("off-grid-inverters"))).toMatchObject({ robots: { index: false, follow: true } });
+  });
+
   it("is not found when the store has no such category, so a made-up address gives a real 404", async () => {
     await expect(render("no-such-category")).rejects.toThrow("NEXT_NOT_FOUND");
   });
@@ -129,7 +138,7 @@ describe("a category page's trail", () => {
     const ld = trail(await render("gift-packages"));
     expect(ld["@type"]).toBe("BreadcrumbList");
     expect(ld.itemListElement.map((i: { name: string }) => i.name)).toEqual(["Home", "Shop", "Gift Packages"]);
-    expect(ld.itemListElement[2].item).toBe("https://www.watchfusionkenya.com/shop/gift-packages");
+    expect(ld.itemListElement[2].item).toBe("https://mwaleogreenenergy.co.ke/shop/gift-packages");
   });
 });
 
@@ -159,7 +168,7 @@ describe("a category page's metadata", () => {
     expect(m.openGraph).toMatchObject({
       type: "website",
       locale: "en_KE",
-      siteName: "Watch Fusion Kenya",
+      siteName: "Mwaleo Green Energy",
       images: [{ url: "/share-image.png", width: 1200, height: 630 }],
     });
   });
