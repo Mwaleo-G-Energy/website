@@ -11,14 +11,14 @@ import { WixClientContextProvider } from "@/context/wixContext";
 import { THEME_SCRIPT } from "@/lib/theme";
 
 const dmSans = localFont({
-  src: "./fonts/dm-sans-latin.woff2",
+  src: "../../public/fonts/dm-sans-latin.woff2",
   variable: "--font-sans",
   weight: "400 500",
   display: "swap",
 });
 
 const montserrat = localFont({
-  src: "./fonts/montserrat-latin.woff2",
+  src: "../../public/fonts/montserrat-latin.woff2",
   variable: "--font-display",
   weight: "700 800",
   display: "swap",
