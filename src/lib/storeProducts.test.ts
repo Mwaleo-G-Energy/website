@@ -1,0 +1,332 @@
+import { describe, expect, it } from "vitest";
+import {
+  PRODUCTS_SEARCH_URL,
+  getPriceBounds,
+  buildSearchBody,
+  listProducts,
+  type FetchLike,
+} from "@/lib/storeProducts";
+
+const CATEGORY = "e13a1031-1747-bffd-b847-56c1ee9a1b07";
+
+const wixProduct = (n: number, overrides: Record<string, unknown> = {}) => ({
+  id: `id-${n}`,
+  slug: `watch-${n}`,
+  name: `Watch ${n}`,
+  actualPriceRange: {
+    minValue: { amount: "3500.00" },
+    maxValue: { amount: "3500.00" },
+  },
+  media: {
+    main: { image: { url: `https://img/${n}-a.jpg` } },
+    itemsInfo: {
+      items: [
+        { image: { url: `https://img/${n}-a.jpg` } },
+        { image: { url: `https://img/${n}-b.jpg` } },
+      ],
+    },
+  },
+  ...overrides,
+});
+
+const fakeFetch = (products: unknown[], status = 200, body?: unknown) => {
+  const calls: { url: string; body: any }[] = [];
+  const fetchLike: FetchLike = async (url, init) => {
+    calls.push({ url, body: JSON.parse(String(init?.body)) });
+    return new Response(JSON.stringify(body ?? { products }), { status });
+  };
+  return { fetchLike, calls };
+};
+
+describe("buildSearchBody", () => {
+  it("asks Wix for each product's full photo list, which the hover photo on a card needs", () => {
+    expect(buildSearchBody({}).fields).toContain("MEDIA_ITEMS_INFO");
+  });
+
+  it("sends no filter when nothing is asked for", () => {
+    const body = buildSearchBody({});
+    expect(body.search.filter).toBeUndefined();
+    expect(body.search.cursorPaging).toEqual({ limit: 100 });
+  });
+
+  it("filters by category through the category membership field", () => {
+    const { filter } = buildSearchBody({ categoryId: CATEGORY }).search;
+    expect(filter).toEqual({
+      $and: [
+        {
+          "allCategoriesInfo.categories": {
+            $matchItems: [{ id: { $eq: CATEGORY } }],
+          },
+        },
+      ],
+    });
+  });
+
+  it("ignores an empty category id so the home page's unset category shows every product", () => {
+    expect(buildSearchBody({ categoryId: "" }).search.filter).toBeUndefined();
+  });
+
+  it("asks Wix only for products that have a compare-at price when listing sales, so the 100-product limit is not spent on the rest", () => {
+    const body = buildSearchBody({ onSale: true });
+    expect(body.search.filter).toEqual({
+      $and: [{ "compareAtPriceRange.minValue.amount": { $gt: "0" } }],
+    });
+    expect(buildSearchBody({}).search.filter).toBeUndefined();
+  });
+
+  it("never uses the two catalog V1 fields that Wix rejects on a V3 store", () => {
+    const text = JSON.stringify(
+      buildSearchBody({ categoryId: CATEGORY, type: "physical", name: "n" })
+    );
+    expect(text).not.toContain("collectionIds");
+    expect(text).not.toContain("$hasSome");
+  });
+
+  it("puts each price bound in its own condition", () => {
+    const { filter } = buildSearchBody({ min: "1000", max: "9000" }).search;
+    expect(filter?.$and).toEqual([
+      { "actualPriceRange.minValue.amount": { $gte: "1000" } },
+      { "actualPriceRange.minValue.amount": { $lte: "9000" } },
+    ]);
+  });
+
+  it("maps name and product type", () => {
+    const { filter } = buildSearchBody({ name: "Navi", type: "digital" }).search;
+    expect(filter?.$and).toContainEqual({ name: { $startsWith: "Navi" } });
+    expect(filter?.$and).toContainEqual({ productType: { $eq: "DIGITAL" } });
+  });
+
+  it("maps the sort choices the filter form offers", () => {
+    expect(buildSearchBody({ sort: "asc price" }).search.sort).toEqual([
+      { fieldName: "actualPriceRange.minValue.amount", order: "ASC" },
+    ]);
+    expect(buildSearchBody({ sort: "desc lastUpdated" }).search.sort).toEqual([
+      { fieldName: "updatedDate", order: "DESC" },
+    ]);
+  });
+
+  it("sorts by the day a product was added, so editing an old product does not make it new", () => {
+    expect(buildSearchBody({ sort: "desc created" }).search.sort).toEqual([{ fieldName: "createdDate", order: "DESC" }]);
+  });
+
+  it("ignores values that only exist on every object, such as 'constructor'", () => {
+    expect(buildSearchBody({ type: "constructor" }).search.filter).toBeUndefined();
+    expect(buildSearchBody({ type: "__proto__" }).search.filter).toBeUndefined();
+    expect(buildSearchBody({ sort: "asc constructor" }).search.sort).toBeUndefined();
+    expect(buildSearchBody({ sort: "asc __proto__" }).search.sort).toBeUndefined();
+  });
+
+  it("uses the first value when a query key is repeated", () => {
+    const { filter } = buildSearchBody({
+      name: ["Navi", "Curren"],
+      type: ["physical", "digital"],
+      min: ["1000", "2000"],
+    }).search;
+    expect(filter?.$and).toContainEqual({ name: { $startsWith: "Navi" } });
+    expect(filter?.$and).toContainEqual({ productType: { $eq: "PHYSICAL" } });
+    expect(filter?.$and).toContainEqual({ "actualPriceRange.minValue.amount": { $gte: "1000" } });
+    expect(buildSearchBody({ sort: ["asc price", "desc name"] }).search.sort).toHaveLength(1);
+  });
+
+  it("reads a price typed with a thousands comma and drops one that is not a number", () => {
+    expect(buildSearchBody({ min: "1,000" }).search.filter?.$and).toEqual([
+      { "actualPriceRange.minValue.amount": { $gte: "1000" } },
+    ]);
+    expect(buildSearchBody({ min: "KES 500", max: "abc" }).search.filter).toBeUndefined();
+  });
+
+  it("drops a sort it does not know instead of sending it to Wix", () => {
+    expect(buildSearchBody({ sort: "asc colour" }).search.sort).toBeUndefined();
+    expect(buildSearchBody({ sort: "sideways price" }).search.sort).toBeUndefined();
+  });
+});
+
+describe("listProducts", () => {
+  it("posts one search to the V3 products endpoint", async () => {
+    const { fetchLike, calls } = fakeFetch([wixProduct(1)]);
+    await listProducts(fetchLike, { categoryId: CATEGORY });
+    expect(calls).toHaveLength(1);
+    expect(calls[0].url).toBe(PRODUCTS_SEARCH_URL);
+    expect(PRODUCTS_SEARCH_URL).toBe("https://www.wixapis.com/stores/v3/products/search");
+  });
+
+  it("turns a Wix product into a card", async () => {
+    const { fetchLike } = fakeFetch([wixProduct(1)]);
+    const page = await listProducts(fetchLike, {});
+    expect(page.items[0]).toEqual({
+      id: "id-1",
+      slug: "watch-1",
+      name: "Watch 1",
+      imageUrl: "https://img/1-a.jpg",
+      hoverImageUrl: "https://img/1-b.jpg",
+      priceLabel: "KES 3,500",
+      compareAtLabel: null,
+      discountPercent: null,
+    });
+  });
+
+  it("marks a product on sale when its compare-at price is above its price", async () => {
+    const product = wixProduct(1, {
+      compareAtPriceRange: { minValue: { amount: "4375.00" }, maxValue: { amount: "4375.00" } },
+    });
+    const card = (await listProducts(fakeFetch([product]).fetchLike, {})).items[0];
+    expect(card.priceLabel).toBe("KES 3,500");
+    expect(card.compareAtLabel).toBe("KES 4,375");
+    expect(card.discountPercent).toBe(20);
+  });
+
+  it("does not mark a sale when the compare-at price equals, is below, or is not a number", async () => {
+    for (const amount of ["3500.00", "3000.00", "abc", "0"]) {
+      const product = wixProduct(1, {
+        compareAtPriceRange: { minValue: { amount }, maxValue: { amount } },
+      });
+      const card = (await listProducts(fakeFetch([product]).fetchLike, {})).items[0];
+      expect(card.compareAtLabel).toBeNull();
+      expect(card.discountPercent).toBeNull();
+    }
+  });
+
+  it("shows no sale on a product whose variants have different prices, since the old price may belong to another variant", async () => {
+    const product = wixProduct(1, {
+      actualPriceRange: { minValue: { amount: "3000.00" }, maxValue: { amount: "5000.00" } },
+      compareAtPriceRange: { minValue: { amount: "6000.00" }, maxValue: { amount: "6000.00" } },
+    });
+    const card = (await listProducts(fakeFetch([product]).fetchLike, {})).items[0];
+    expect(card.priceLabel).toBe("From KES 3,000");
+    expect(card.compareAtLabel).toBeNull();
+    expect(card.discountPercent).toBeNull();
+  });
+
+  it("shows no sale for a price of zero, and never a percent of 100", async () => {
+    const free = wixProduct(1, {
+      actualPriceRange: { minValue: { amount: "0" }, maxValue: { amount: "0" } },
+      compareAtPriceRange: { minValue: { amount: "500.00" }, maxValue: { amount: "500.00" } },
+    });
+    expect((await listProducts(fakeFetch([free]).fetchLike, {})).items[0].discountPercent).toBeNull();
+    const huge = wixProduct(2, {
+      actualPriceRange: { minValue: { amount: "1.00" }, maxValue: { amount: "1.00" } },
+      compareAtPriceRange: { minValue: { amount: "100000.00" }, maxValue: { amount: "100000.00" } },
+    });
+    expect((await listProducts(fakeFetch([huge]).fetchLike, {})).items[0].discountPercent).toBe(99);
+  });
+
+  it("rounds the percent off to a whole number and never shows 0", async () => {
+    const small = wixProduct(1, {
+      compareAtPriceRange: { minValue: { amount: "3501.00" }, maxValue: { amount: "3501.00" } },
+    });
+    const card = (await listProducts(fakeFetch([small]).fetchLike, {})).items[0];
+    expect(card.compareAtLabel).toBeNull();
+    expect(card.discountPercent).toBeNull();
+    const third = wixProduct(2, {
+      compareAtPriceRange: { minValue: { amount: "5250.00" }, maxValue: { amount: "5250.00" } },
+    });
+    expect((await listProducts(fakeFetch([third]).fetchLike, {})).items[0].discountPercent).toBe(33);
+  });
+
+  it("prefixes 'From' when variants have different prices", async () => {
+    const product = wixProduct(1, {
+      actualPriceRange: {
+        minValue: { amount: "2500.00" },
+        maxValue: { amount: "4000.00" },
+      },
+    });
+    const page = await listProducts(fakeFetch([product]).fetchLike, {});
+    expect(page.items[0].priceLabel).toBe("From KES 2,500");
+  });
+
+  it("falls back when a product has no images or no price", async () => {
+    const bare = { id: "x", slug: "bare", name: "Bare" };
+    const page = await listProducts(fakeFetch([bare]).fetchLike, {});
+    expect(page.items[0]).toMatchObject({
+      imageUrl: null,
+      hoverImageUrl: null,
+      priceLabel: "",
+    });
+  });
+
+  it("lists only products on sale when asked, and pages through those", async () => {
+    const sale = (n: number) =>
+      wixProduct(n, { compareAtPriceRange: { minValue: { amount: "5000.00" }, maxValue: { amount: "5000.00" } } });
+    const products = [wixProduct(1), sale(2), wixProduct(3), sale(4), sale(5)];
+    const page0 = await listProducts(fakeFetch(products).fetchLike, { onSale: true, limit: 2 });
+    expect(page0.items.map((c) => c.id)).toEqual(["id-2", "id-4"]);
+    expect(page0.hasNext).toBe(true);
+    const page1 = await listProducts(fakeFetch(products).fetchLike, { onSale: true, limit: 2, page: 1 });
+    expect(page1.items.map((c) => c.id)).toEqual(["id-5"]);
+    expect(page1.hasNext).toBe(false);
+  });
+
+  it("lists every product when not asked for sales only", async () => {
+    const products = [wixProduct(1), wixProduct(2)];
+    expect((await listProducts(fakeFetch(products).fetchLike, {})).items).toHaveLength(2);
+  });
+
+  it("returns an empty page for an empty category", async () => {
+    const page = await listProducts(fakeFetch([]).fetchLike, { categoryId: CATEGORY });
+    expect(page).toEqual({ items: [], page: 0, hasPrev: false, hasNext: false });
+  });
+
+  it("pages in memory, zero based, and reports both directions", async () => {
+    const products = Array.from({ length: 25 }, (_, i) => wixProduct(i));
+    const { fetchLike } = fakeFetch(products);
+
+    const first = await listProducts(fetchLike, { limit: 9 });
+    expect(first.items.map((i) => i.id)).toEqual(products.slice(0, 9).map((p) => p.id));
+    expect(first).toMatchObject({ page: 0, hasPrev: false, hasNext: true });
+
+    const second = await listProducts(fetchLike, { limit: 9, page: "1" });
+    expect(second.items[0].id).toBe("id-9");
+    expect(second).toMatchObject({ page: 1, hasPrev: true, hasNext: true });
+
+    const last = await listProducts(fetchLike, { limit: 9, page: "2" });
+    expect(last.items).toHaveLength(7);
+    expect(last).toMatchObject({ page: 2, hasPrev: true, hasNext: false });
+  });
+
+  it("treats a junk page number as the first page", async () => {
+    const page = await listProducts(fakeFetch([wixProduct(1)]).fetchLike, { page: "abc" });
+    expect(page.page).toBe(0);
+  });
+
+  it("treats a repeated page key as its first value", async () => {
+    const products = Array.from({ length: 12 }, (_, i) => wixProduct(i));
+    const page = await listProducts(fakeFetch(products).fetchLike, { limit: 5, page: ["1", "2"] });
+    expect(page.page).toBe(1);
+    expect(page.items[0].id).toBe("id-5");
+  });
+
+  it("returns an empty last page when the page is past the end", async () => {
+    const page = await listProducts(fakeFetch([wixProduct(1)]).fetchLike, { limit: 5, page: "4" });
+    expect(page).toEqual({ items: [], page: 4, hasPrev: true, hasNext: false });
+  });
+
+  it("throws when a 200 response has no product list", async () => {
+    const { fetchLike } = fakeFetch([], 200, { unexpected: true });
+    await expect(listProducts(fetchLike, {})).rejects.toThrow(/unexpected response/);
+  });
+
+  it("throws with Wix's message when the search is rejected", async () => {
+    const { fetchLike } = fakeFetch([], 400, {
+      message: "Invalid filter",
+      details: { applicationError: { code: "SE-1105" } },
+    });
+    await expect(listProducts(fetchLike, {})).rejects.toThrow(/400.*SE-1105.*Invalid filter/);
+  });
+});
+
+describe("getPriceBounds", () => {
+  const priced = (amount: string) => ({ id: amount, slug: amount, name: amount, actualPriceRange: { minValue: { amount }, maxValue: { amount } } });
+  const fetchWith = (products: unknown[], ok = true): FetchLike => async () =>
+    new Response(JSON.stringify({ products }), { status: ok ? 200 : 500 });
+
+  it("is the cheapest and dearest price in the shop, rounded outward to whole hundreds", async () => {
+    expect(await getPriceBounds(fetchWith([priced("10"), priced("3500"), priced("6450")]))).toEqual({ min: 0, max: 6500 });
+  });
+
+  it("is nothing when the shop cannot be read or has no usable range", async () => {
+    expect(await getPriceBounds(fetchWith([], false))).toBeNull();
+    expect(await getPriceBounds(fetchWith([]))).toBeNull();
+    expect(await getPriceBounds(fetchWith([priced("500")]))).toBeNull();
+    expect(await getPriceBounds(async () => { throw new Error("down"); })).toBeNull();
+  });
+});

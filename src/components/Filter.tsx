@@ -1,0 +1,188 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { PRICE_STEP, clampRange, formatPrice, fillPercent, rangeToParams, type Bounds, type Range } from "@/lib/priceRange";
+
+// Builds the address for a changed choice. An empty value removes the choice, and the page number is
+// always dropped, so a filter that shortens the list can never leave the shopper on a page past its end.
+export const nextUrl = (
+  pathname: string,
+  current: URLSearchParams,
+  changes: Record<string, string>
+): string => {
+  const params = new URLSearchParams(current);
+  for (const [key, value] of Object.entries(changes)) {
+    if (value === "") params.delete(key);
+    else params.set(key, value);
+  }
+  params.delete("page");
+  const query = params.toString();
+  return query ? `${pathname}?${query}` : pathname;
+};
+
+// A price typed by a shopper: keeps whole numbers, strips commas, spaces and "KES", drops anything else.
+export const cleanPrice = (raw: string): string => {
+  const trimmed = raw.replace(/kes/gi, "").replace(/[,\s]/g, "");
+  return /^\d+$/.test(trimmed) ? String(parseInt(trimmed, 10)) : "";
+};
+
+// A minimum above the maximum would show nothing, so the two are swapped.
+export const orderedPrices = (min: string, max: string): { min: string; max: string } =>
+  min !== "" && max !== "" && Number(min) > Number(max) ? { min: max, max: min } : { min, max };
+
+const SORTS = [
+  { value: "desc created", label: "Newest first" },
+  { value: "asc price", label: "Price: low to high" },
+  { value: "desc price", label: "Price: high to low" },
+];
+
+const field =
+  "rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-gold";
+const label = "mb-1 block text-xs font-medium text-gray-600";
+
+// Two handles on one bar for the lowest and highest price. The list changes when a handle is let go.
+const PriceSlider = ({ bounds, initial, onCommit }: { bounds: Bounds; initial: Range; onCommit: (range: Range) => void }) => {
+  const [range, setRange] = useState<Range>(initial);
+  const commit = () => {
+    if (range.lo !== initial.lo || range.hi !== initial.hi) onCommit(range);
+  };
+  const handlers = { onPointerUp: commit, onKeyUp: commit, onBlur: commit };
+  const common = { type: "range" as const, min: bounds.min, max: bounds.max, step: PRICE_STEP, className: "price-range", ...handlers };
+
+  return (
+    <div className="w-full sm:max-w-sm">
+      <p className="mb-2 flex justify-between text-xs font-medium text-gray-600">
+        <span>Price</span>
+        <span className="text-sm font-semibold text-gray-900">
+          {formatPrice(range.lo)} to {formatPrice(range.hi)}
+        </span>
+      </p>
+      <div className="relative h-8">
+        <div className="absolute left-0 right-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-gray-200" />
+        <div
+          className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-brand-navy"
+          style={{ left: `${fillPercent(range.lo, bounds)}%`, width: `${fillPercent(range.hi, bounds) - fillPercent(range.lo, bounds)}%` }}
+        />
+        <input
+          {...common}
+          aria-label="Minimum price"
+          value={range.lo}
+          onChange={(e) => setRange(clampRange(Number(e.target.value), range.hi, bounds))}
+        />
+        <input
+          {...common}
+          aria-label="Maximum price"
+          value={range.hi}
+          onChange={(e) => setRange(clampRange(range.lo, Number(e.target.value), bounds))}
+        />
+      </div>
+    </div>
+  );
+};
+
+const Filter = ({ bounds }: { bounds?: Bounds | null }) => {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const { replace } = useRouter();
+
+  const sort = searchParams.get("sort") ?? "";
+  const min = searchParams.get("min") ?? "";
+  const max = searchParams.get("max") ?? "";
+  const hasPrice = min !== "" || max !== "";
+
+  const applyPrice = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    replace(
+      nextUrl(
+        pathname,
+        searchParams,
+        orderedPrices(cleanPrice(String(data.get("min") ?? "")), cleanPrice(String(data.get("max") ?? "")))
+      )
+    );
+  };
+
+  return (
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      {bounds ? (
+        <div key={`${min}|${max}`} className="flex flex-wrap items-end gap-4">
+          <PriceSlider
+            bounds={bounds}
+            initial={clampRange(min ? Number(min) : bounds.min, max ? Number(max) : bounds.max, bounds)}
+            onCommit={(range) => replace(nextUrl(pathname, searchParams, rangeToParams(range, bounds)))}
+          />
+          {hasPrice && (
+            <Link
+              href={nextUrl(pathname, searchParams, { min: "", max: "" })}
+              className="py-2 text-sm font-medium text-gray-600 underline underline-offset-4 hover:text-gray-900"
+            >
+              Clear
+            </Link>
+          )}
+        </div>
+      ) : (
+      <form key={`${min}|${max}`} onSubmit={applyPrice} className="flex flex-wrap items-end gap-3">
+        <div>
+          <label htmlFor="filter-min" className={label}>Min price</label>
+          <input
+            id="filter-min"
+            name="min"
+            type="text"
+            inputMode="numeric"
+            defaultValue={min}
+            placeholder="KES"
+            className={`${field} w-28`}
+          />
+        </div>
+        <div>
+          <label htmlFor="filter-max" className={label}>Max price</label>
+          <input
+            id="filter-max"
+            name="max"
+            type="text"
+            inputMode="numeric"
+            defaultValue={max}
+            placeholder="KES"
+            className={`${field} w-28`}
+          />
+        </div>
+        <button
+          type="submit"
+          className="rounded-lg bg-brand-navy px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-gold hover:text-brand-navy"
+        >
+          Apply
+        </button>
+        {hasPrice && (
+          <Link
+            href={nextUrl(pathname, searchParams, { min: "", max: "" })}
+            className="py-2 text-sm font-medium text-gray-600 underline underline-offset-4 hover:text-gray-900"
+          >
+            Clear
+          </Link>
+        )}
+      </form>
+      )}
+
+      <div>
+        <label htmlFor="filter-sort" className={label}>Sort by</label>
+        <select
+          key={sort}
+          id="filter-sort"
+          name="sort"
+          defaultValue={sort}
+          className={`${field} w-full sm:w-52`}
+          onChange={(e) => replace(nextUrl(pathname, searchParams, { sort: e.target.value }))}
+        >
+          <option value="">Default</option>
+          {SORTS.map((s) => (
+            <option key={s.value} value={s.value}>{s.label}</option>
+          ))}
+        </select>
+      </div>
+    </div>
+  );
+};
+
+export default Filter;
