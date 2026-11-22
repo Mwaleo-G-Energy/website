@@ -23,8 +23,8 @@ Use [.env.example](../.env.example) as the checklist for Vercel Project Settings
 |---|---|
 | `NEXT_PUBLIC_WIX_CLIENT_ID` | Public OAuth client ID from Mwaleo's Wix Headless setup. Required for the Wix storefront connection, including products, member login and cart. The build can pass with this missing. |
 | `WIX_CLIENT_SECRET` | Secret for the same Wix client. Required for the Wix contact form and custom delivery fees. Store it as sensitive and keep it server-side. |
-| `FEATURED_PRODUCTS_CATEGORY_ID` | Wix Stores category ID for Customer Favourites. That section requests an unfiltered list when this is blank. |
-| `NEW_PRODUCTS_CATEGORY_ID` | Wix Stores category ID for New Products. That section requests an unfiltered list when this is blank. |
+| `FEATURED_PRODUCTS_CATEGORY_ID` | Wix Stores category ID for Customer Favourites. The homepage hides this section when the ID is blank. |
+| `NEW_PRODUCTS_CATEGORY_ID` | Wix Stores category ID for New Products. The homepage hides this section when the ID is blank. |
 | `NEXT_PUBLIC_MWALEO_WHATSAPP_NUMBER` | Confirmed number in international digits with no plus sign or spaces. WhatsApp links are hidden when the value is missing or invalid. |
 | `NEXT_PUBLIC_MWALEO_FREE_DELIVERY_FROM` | Approved free-delivery threshold in KES, if there is one. Leave blank to use the rate from Wix. |
 

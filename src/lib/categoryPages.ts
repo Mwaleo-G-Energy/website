@@ -17,6 +17,17 @@ export type CategoryPage = {
   seoDescription: string | null;
 };
 
+export const LAUNCH_CATEGORIES = [
+  { slug: "off-grid-inverters", name: "Off-grid inverters", description: "Inverter chargers for solar and backup power." },
+  { slug: "lithium-batteries", name: "Lithium batteries", description: "Battery storage for compatible solar systems." },
+  { slug: "solar-kits", name: "Solar kits", description: "Matched equipment for a complete off-grid system." },
+] as const;
+
+export const pendingLaunchCategory = (slug: string): CategoryPage | undefined => {
+  const category = LAUNCH_CATEGORIES.find((item) => item.slug === slug);
+  return category && { ...category, id: "", seoTitle: null, seoDescription: null };
+};
+
 export type SeoTag = { type?: string; children?: string; props?: { name?: string; content?: string }; disabled?: boolean };
 type WixCategory = { id?: string; name?: string; slug?: string; description?: string; seoData?: { tags?: SeoTag[] } };
 

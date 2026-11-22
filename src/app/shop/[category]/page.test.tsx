@@ -79,6 +79,15 @@ describe("a category page", () => {
     expect(html).not.toContain('href="/shop/all-products"');
   });
 
+  it("shows an unconfigured launch category without querying the unfiltered catalogue", async () => {
+    productList.mockClear();
+    const html = await render("off-grid-inverters");
+    expect(html).toContain("Off-grid inverters");
+    expect(html).toContain("Coming soon.");
+    expect(productList).not.toHaveBeenCalled();
+    expect(await generateMetadata(props("off-grid-inverters"))).toMatchObject({ robots: { index: false, follow: true } });
+  });
+
   it("is not found when the store has no such category, so a made-up address gives a real 404", async () => {
     await expect(render("no-such-category")).rejects.toThrow("NEXT_NOT_FOUND");
   });

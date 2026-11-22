@@ -121,16 +121,16 @@ This is a separate client. No shared Wix site, keys, Vercel project, Google acco
 
 ## Environment & Secrets
 
-Values live in Vercel (Preview and Production) and `.env.local`. None is checked at boot; each is read with a `!` assertion, so a missing value fails at request time.
+Values live in Vercel (Preview and Production) and `.env.local`. Wix settings affect requests even when the production build passes.
 
 | Variable | Required | When missing |
 |---|---|---|
 | `NEXT_PUBLIC_WIX_CLIENT_ID` | yes | Wix auth fails at request time (the build itself passes). Public identifier, not a secret. |
 | `WIX_CLIENT_SECRET` | only for delivery fees and the contact form | Those features stay off. Server-only: never prefix with `NEXT_PUBLIC_`, never log it. |
-| `FEATURED_PRODUCTS_CATEGORY_ID` | yes | The featured home section shows an unfiltered product list. |
-| `NEW_PRODUCTS_CATEGORY_ID` | yes | The new-products home section shows an unfiltered product list. |
+| `FEATURED_PRODUCTS_CATEGORY_ID` | optional | The homepage hides the section. |
+| `NEW_PRODUCTS_CATEGORY_ID` | optional | The homepage hides the section. |
 
-CI builds with GitHub repository variables `NEXT_PUBLIC_WIX_CLIENT_ID` and `FEATURED_PRODUCTS_CATEGORY_ID`. They are not set yet (Mwaleo's Wix site does not exist). The build still passes without them, but Wix calls fail at request time.
+CI builds with GitHub repository variables `NEXT_PUBLIC_WIX_CLIENT_ID` and `FEATURED_PRODUCTS_CATEGORY_ID`. The build still passes without them, but Wix calls fail at request time.
 
 ## Read Before Touching This
 
