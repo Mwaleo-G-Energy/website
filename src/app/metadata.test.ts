@@ -128,7 +128,8 @@ describe("home storefront", () => {
 
 describe("retired storefront pages", () => {
   it("sends former gift-voucher and returns links to active Mwaleo pages", () => {
-    expect(read("src/app/gift-vouchers/page.tsx")).toContain('redirect("/shop")');
-    expect(read("src/app/return-policy/page.tsx")).toContain('redirect("/contact")');
+    const config = read("next.config.mjs");
+    expect(config).toMatch(/source: "\/gift-vouchers", destination: "\/shop"/);
+    expect(config).toMatch(/source: "\/return-policy", destination: "\/contact"/);
   });
 });
