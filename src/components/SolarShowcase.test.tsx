@@ -1,6 +1,7 @@
+import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
-vi.mock("next/image", () => ({ default: ({ fill: _fill, ...props }: any) => <img {...props} /> }));
+vi.mock("next/image", () => ({ default: ({ fill: _fill, ...props }: any) => createElement("img", props) }));
 import SolarShowcase from "./SolarShowcase";
 
 describe("solar showcase", () => {
