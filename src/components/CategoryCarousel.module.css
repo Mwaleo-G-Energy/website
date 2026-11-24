@@ -1,0 +1,93 @@
+.carousel {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr) 2.5rem;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.track {
+  display: flex;
+  gap: 1rem;
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.track::-webkit-scrollbar {
+  display: none;
+}
+
+.slide {
+  flex: 0 0 100%;
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+.card {
+  display: block;
+  height: 100%;
+  min-height: 6.5rem;
+  padding: 1.25rem;
+  border: 1px solid rgb(var(--gray-200));
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.card:focus-visible,
+.control:focus-visible {
+  outline: 2px solid var(--sun);
+  outline-offset: 3px;
+}
+
+.card h3 {
+  font-family: var(--font-display, inherit);
+  font-size: 1.125rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--sun);
+  text-underline-offset: 0.25rem;
+}
+
+.card p {
+  margin-top: 0.5rem;
+  color: var(--gray-700);
+}
+
+.control {
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  border: 1px solid rgb(var(--gray-200));
+  border-radius: 9999px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.control svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .slide {
+    flex-basis: calc((100% - 1rem) / 2);
+  }
+}
+
+@media (min-width: 1024px) {
+  .slide {
+    flex-basis: calc((100% - 2rem) / 3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    scroll-behavior: auto;
+  }
+}

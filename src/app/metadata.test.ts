@@ -124,7 +124,8 @@ describe("home storefront", () => {
     expect(home).toContain('href="/shop"');
     expect(home).not.toContain("<Slider");
     expect(home).toContain("/solar/solar-technician-hero.jpg");
-    expect(home).toContain("LAUNCH_CATEGORIES.map");
+    expect(home).toContain("<CategoryCarousel categories={LAUNCH_CATEGORIES}");
+    expect(home).not.toContain("styles.topline");
     expect(home.indexOf("Shop by category")).toBeGreaterThan(home.indexOf("Off-grid solar<br />and backup<br />"));
     expect(home).toContain("<HomeCatalogue searchParams={searchParams}");
     expect(home).not.toContain("SolarShowcase");

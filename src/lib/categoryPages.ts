@@ -21,6 +21,8 @@ export const LAUNCH_CATEGORIES = [
   { slug: "off-grid-inverters", name: "Off-grid inverters", description: "Inverter chargers for solar and backup power." },
   { slug: "lithium-batteries", name: "Lithium batteries", description: "Battery storage for compatible solar systems." },
   { slug: "solar-kits", name: "Solar kits", description: "Matched equipment for a complete off-grid system." },
+  { slug: "lead-acid-batteries", name: "Lead-acid batteries", description: "12V batteries for backup and off-grid systems." },
+  { slug: "solar-panels", name: "Solar panels", description: "Solar modules for home and business power systems." },
 ] as const;
 
 export const pendingLaunchCategory = (slug: string): CategoryPage | undefined => {
