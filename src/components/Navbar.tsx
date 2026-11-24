@@ -5,7 +5,6 @@ import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { SITE_NAME } from '@/lib/site'
 import SearchBar from './SearchBar'
-import Categories from './CategoryList'
 import Menu from './Menu'
 import NavIcons from './NavIcons'
 import MobileCartLink from './MobileCartLink'
@@ -103,9 +102,9 @@ const Navbar = () => {
       </div>
 
       {/* Desktop Navbar */}
-      <div data-testid="desktop-header" className='hidden md:flex items-center justify-between gap-8 h-full'>
+      <div data-testid="desktop-header" className='hidden md:flex items-center gap-6 h-full'>
         {/* Left Section */}
-        <div className='flex flex-shrink-0 items-center gap-2'>
+        <div className='flex flex-shrink-0 items-center gap-3'>
           {!onHome && <Menu />}
           <Link href="/" aria-label={`${SITE_NAME}, home`} className="flex items-center flex-shrink-0">
             <span className='relative block h-14 aspect-[970/400]'>
@@ -130,9 +129,9 @@ const Navbar = () => {
         </div>
 
         {/* Right Section */}
-        <div className='flex flex-1 items-center justify-between gap-8'>
+        <div className='flex min-w-0 flex-1 items-center gap-6'>
           <SearchBar />
-          <div className='flex items-center gap-2'>
+          <div className='flex shrink-0 items-center gap-1'>
             <ThemeToggle />
             <NavIcons />
           </div>
