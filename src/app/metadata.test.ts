@@ -130,6 +130,12 @@ describe("home storefront", () => {
     expect(home).toContain("<HomeCatalogue searchParams={searchParams}");
     expect(home).not.toContain("SolarShowcase");
   });
+
+  it("sets the hero navigation below the top edge in normal page flow", () => {
+    const css = read("src/app/home.module.css");
+    expect(css).toMatch(/\.heroHeader\s*\{[^}]*padding-top:\s*clamp\(/);
+    expect(css).not.toMatch(/\.hero(?:Header|Nav)[^{]*\{[^}]*position:\s*(?:sticky|fixed)/s);
+  });
 });
 
 describe("retired storefront pages", () => {
