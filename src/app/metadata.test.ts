@@ -120,12 +120,12 @@ describe("the home page's title and description", () => {
 describe("home storefront", () => {
   it("introduces the solar range and links to the shop", () => {
     const home = read("src/app/page.tsx");
-    expect(home).toContain("Off-grid solar and backup power");
+    expect(home).toContain("Off-grid solar<br />and backup<br />");
     expect(home).toContain('href="/shop"');
     expect(home).not.toContain("<Slider");
-    expect(home).toContain("/solar/felicity-ivem6048-ii.png");
+    expect(home).toContain("/solar/solar-technician-hero.jpg");
     expect(home).toContain("LAUNCH_CATEGORIES.map");
-    expect(home.indexOf("Shop by category")).toBeGreaterThan(home.indexOf("Off-grid solar and backup power"));
+    expect(home.indexOf("Shop by category")).toBeGreaterThan(home.indexOf("Off-grid solar<br />and backup<br />"));
     expect(home).toContain("<SolarShowcase");
   });
 });

@@ -44,6 +44,7 @@ const Navbar = () => {
   return (
     <div
       ref={frame}
+      data-home-navbar={onHome || undefined}
       style={reserve ? ({ '--reserve': `${reserve}px` } as React.CSSProperties) : undefined}
       className='pointer-events-none sticky top-0 z-[45] h-[var(--reserve,auto)] md:pointer-events-auto md:h-20'
     >
