@@ -1,7 +1,6 @@
 
 import SolarShowcase from "@/components/SolarShowcase";
 import styles from "./home.module.css";
-import Image from "next/image";
 import { categoryHref, LAUNCH_CATEGORIES } from "@/lib/categoryPages";
 import ProductList from "@/components/ProductList";
 import Skeleton from "@/components/Skeleton";
@@ -11,32 +10,24 @@ import { jsonLdScript, organizationJsonLd, websiteJsonLd } from "@/lib/seo";
 
 export const metadata = { alternates: { canonical: "/" } };
 
-export default function HomePage() {
+export default function HomePage({ searchParams = {} }: { searchParams?: { [key: string]: string | string[] | undefined } }) {
   return (
     <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(organizationJsonLd()) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(websiteJsonLd()) }} />
-      <section className={styles.hero}>
-        <div className={styles.heroCopy}>
-          <p className={styles.eyebrow}>Authorised Felicity Solar dealer · Nairobi CBD</p>
-          <h1>Off-grid solar and backup power</h1>
-          <p>Make room for reliable power. Explore Felicity Solar inverters, batteries and equipment for your next solar system.</p>
-          <Link href="#home-products" className={styles.primary}>Explore the equipment <span aria-hidden="true">→</span></Link>
-          <Link href="/contact" className={styles.secondary}>Ask us about your system</Link>
-        </div>
-        <figure className={styles.heroProduct}>
-          <Image src="/solar/felicity-ivem6048-ii.png" alt="Felicity Solar IVEM6048-II off-grid inverter" width={800} height={800} sizes="(max-width: 700px) 80vw, 440px" priority />
-          <figcaption>Felicity Solar IVEM6048-II</figcaption>
-        </figure>
-      </section>
-      <section aria-labelledby="shop-categories" className="px-4 py-12 md:px-8 md:py-16 lg:px-16 xl:px-32 2xl:px-64">
-        <h2 id="shop-categories" className="mb-6 font-display text-3xl font-bold">Shop by category</h2>
-        <ul className="grid gap-px border border-gray-200 bg-gray-200 md:grid-cols-3">
+      <header className={styles.shopIntro}>
+        <p className={styles.eyebrow}>Authorised Felicity Solar dealer · Nairobi CBD</p>
+        <h1>Off-grid solar and backup power</h1>
+        <p>Shop inverters, batteries and solar equipment.</p>
+      </header>
+      <section aria-labelledby="shop-categories" className={styles.categories}>
+        <h2 id="shop-categories" className="mb-3 font-display text-lg font-bold">Shop by category</h2>
+        <ul className="grid grid-cols-3 gap-px border border-gray-200 bg-gray-200">
           {LAUNCH_CATEGORIES.map((category) => (
             <li key={category.slug} className="bg-white">
-              <Link href={categoryHref(category.slug)} className="block h-full p-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px]">
-                <h3 className="font-display text-lg font-bold underline decoration-brand-gold underline-offset-4">{category.name}</h3>
-                <p className="mt-2 text-gray-700">{category.description}</p>
+              <Link href={categoryHref(category.slug)} className="block h-full p-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px]">
+                <h3 className="font-display text-sm md:text-lg font-bold underline decoration-brand-gold underline-offset-4">{category.name}</h3>
+                <p className="mt-2 hidden text-gray-700 md:block">{category.description}</p>
               </Link>
             </li>
           ))}
@@ -44,11 +35,15 @@ export default function HomePage() {
       </section>
       <section id="home-products" className={styles.products}>
         <div className={styles.sectionTitle}>
-          <div><p className={styles.eyebrow}>The Mwaleo catalogue</p><h2>Find your next power setup.</h2></div>
+          <div><h2>Shop solar equipment</h2></div>
           <Link href="/shop">Shop all equipment <span aria-hidden="true">→</span></Link>
         </div>
+        <form action="/" className={styles.search}>
+          <label htmlFor="model-search">Search by model or product name</label>
+          <div><input id="model-search" name="name" type="search" defaultValue={typeof searchParams.name === "string" ? searchParams.name : ""} placeholder="e.g. IVEM6048" /><button type="submit">Search products</button></div>
+        </form>
         <Suspense fallback={<Skeleton />}>
-          <ProductList categoryId="" limit={8} emptyMessage="Our solar equipment catalogue is coming soon." />
+          <ProductList categoryId="" searchParams={searchParams} limit={12} emptyMessage="Our solar equipment catalogue is coming soon." />
         </Suspense>
       </section>
       <SolarShowcase />

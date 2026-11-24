@@ -13,5 +13,16 @@
 .sectionTitle a, .help a { text-decoration: underline; text-underline-offset: 5px; min-height: 44px; display: inline-flex; align-items: center; }
 .help { border-top: 1px solid var(--muted); padding-block: 48px 64px; }
 .help p:not(.eyebrow) { margin-block: 20px; max-width: 48ch; }
-.hero a:focus-visible, .products a:focus-visible, .help a:focus-visible { outline: 2px solid currentColor; outline-offset: 5px; }
+.products a:focus-visible, .help a:focus-visible { outline: 2px solid currentColor; outline-offset: 5px; }
 @media(max-width:700px) { .hero { grid-template-columns: 1fr; padding: 32px 24px; gap: 32px; } .heroProduct img { max-height: 240px; } .hero h1 { font-size: 40px; } .sectionTitle { align-items: start; flex-direction: column; gap: 12px; } }
+.shopIntro, .categories { max-width: 1248px; margin: auto; padding: 24px 24px 0; }
+.shopIntro h1 { font-family: var(--font-display), sans-serif; font-size: clamp(28px, 3vw, 44px); font-weight: 800; line-height: 1.15; letter-spacing: -.03em; }
+.shopIntro > p:last-child { margin-top: 12px; }
+.shopIntro .eyebrow { margin-bottom: 8px; }
+.search { margin-top: 20px; }
+.search label { display: block; font-size: 14px; margin-bottom: 8px; }
+.search > div { display: flex; gap: 8px; }
+.search input { min-width: 0; flex: 1; background: var(--surface); border: 1px solid var(--muted); padding: 12px; border-radius: 4px; }
+.search button { padding: 12px 20px; border-radius: 4px; background: var(--sun); color: var(--ink); font-weight: 500; }
+.search input:focus-visible, .search button:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+@media(max-width:700px) { .search > div { flex-direction: column; } }
