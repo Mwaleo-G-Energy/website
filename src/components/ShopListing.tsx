@@ -11,7 +11,8 @@ type Params = { [key: string]: string | string[] | undefined };
 
 // What the shop page and every category page show: the heading, the category pills, the filters and the products.
 // With no category it is the whole shop.
-const ShopListing = async ({ category, categories, searchParams, pendingCategory = false }: { pendingCategory?: boolean; category: CategoryPage | null; categories: CategoryPage[]; searchParams: Params }) => {
+const ShopListing = async ({ category, categories, searchParams, pendingCategory = false, embedded = false }: { embedded?: boolean; pendingCategory?: boolean; category: CategoryPage | null; categories: CategoryPage[]; searchParams: Params }) => {
+  const Heading = embedded ? "h2" : "h1";
   const searched = typeof searchParams.name === "string" ? searchParams.name.trim() : "";
   const wixClient = pendingCategory ? null : await wixClientServer();
   const bounds = wixClient ? await getPriceBounds((url, init) => wixClient.fetchWithAuth(url, init)) : undefined;
@@ -24,7 +25,7 @@ const ShopListing = async ({ category, categories, searchParams, pendingCategory
 
   return (
     <div className="px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 relative">
-      <script
+      {!embedded && <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: jsonLdScript(
@@ -35,11 +36,11 @@ const ShopListing = async ({ category, categories, searchParams, pendingCategory
             ])
           ),
         }}
-      />
+      />}
       <div className="pt-8 pb-6">
-        <h1 className="font-display text-4xl font-bold md:text-5xl mb-2">
+        <Heading className="font-display text-4xl font-bold md:text-5xl mb-2">
           {searched ? `Results for “${searched}”` : category?.name || "Shop all products"}
-        </h1>
+        </Heading>
         <p className="text-gray-600">
           {searched
             ? "Matching products from the whole shop"
