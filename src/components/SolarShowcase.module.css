@@ -23,3 +23,9 @@
   .background { object-position: 20% center; }
   .caption { top: 16px; right: 16px; max-width: calc(100% - 32px); padding: 16px; }
 }
+.showcase button:focus-visible, .showcase a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+@media(max-width:700px) { .intro { display: block; } .intro > p { margin-top: 16px; max-width: 40ch; } .scene { min-height: 500px; } .caption { top: 20px; right: 20px; left: 20px; padding: 16px; } .background { object-position: 22% center; } }
+.scene { position: relative; min-height: 600px; }
+.intro h2 { font-family: var(--font-display), sans-serif; font-size: clamp(26px, 3vw, 38px); line-height: 1.15; font-weight: 800; letter-spacing: -.03em; }
+.intro > p { max-width: 38ch; }
+@media(max-width:700px) { .scene { min-height: 520px; } }

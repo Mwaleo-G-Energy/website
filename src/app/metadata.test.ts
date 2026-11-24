@@ -126,7 +126,7 @@ describe("home storefront", () => {
     expect(home).toContain("/solar/felicity-ivem6048-ii.png");
     expect(home).toContain("LAUNCH_CATEGORIES.map");
     expect(home.indexOf("Shop by category")).toBeGreaterThan(home.indexOf("Off-grid solar and backup power"));
-    expect(home).toContain("categoryId &&");
+    expect(home).toContain("<SolarShowcase");
   });
 });
 
