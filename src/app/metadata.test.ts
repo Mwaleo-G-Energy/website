@@ -126,7 +126,8 @@ describe("home storefront", () => {
     expect(home).toContain("/solar/solar-technician-hero.jpg");
     expect(home).toContain("LAUNCH_CATEGORIES.map");
     expect(home.indexOf("Shop by category")).toBeGreaterThan(home.indexOf("Off-grid solar<br />and backup<br />"));
-    expect(home).toContain("<SolarShowcase");
+    expect(home).toContain("<HomeCatalogue searchParams={searchParams}");
+    expect(home).not.toContain("SolarShowcase");
   });
 });
 

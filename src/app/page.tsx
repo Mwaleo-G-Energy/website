@@ -1,10 +1,11 @@
 
 import ThemeToggle from "@/components/ThemeToggle";
-import SolarShowcase from "@/components/SolarShowcase";
+import ShopListing from "@/components/ShopListing";
+import { getCategoryPages } from "@/lib/categoryData";
+import type { CategoryPage } from "@/lib/categoryPages";
 import styles from "./home.module.css";
 import Image from "next/image";
 import { categoryHref, LAUNCH_CATEGORIES } from "@/lib/categoryPages";
-import ProductList from "@/components/ProductList";
 import Skeleton from "@/components/Skeleton";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -12,7 +13,19 @@ import { jsonLdScript, organizationJsonLd, websiteJsonLd } from "@/lib/seo";
 
 export const metadata = { alternates: { canonical: "/" } };
 
-export default function HomePage() {
+type SearchParams = { [key: string]: string | string[] | undefined };
+
+async function HomeCatalogue({ searchParams }: { searchParams: SearchParams }) {
+  let categories: CategoryPage[] = [];
+  try {
+    categories = await getCategoryPages();
+  } catch (error) {
+    console.error("HomePage: category list failed", error);
+  }
+  return <ShopListing category={null} categories={categories} searchParams={searchParams} embedded />;
+}
+
+export default function HomePage({ searchParams = {} }: { searchParams?: SearchParams }) {
   return (
     <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(organizationJsonLd()) }} />
@@ -63,16 +76,11 @@ export default function HomePage() {
           ))}
         </ul>
       </section>
-      <section id="home-products" className={styles.products}>
-        <div className={styles.sectionTitle}>
-          <div><p className={styles.eyebrow}>The Mwaleo catalogue</p><h2>Find your next power setup.</h2></div>
-          <Link href="/shop">Shop all equipment <span aria-hidden="true">→</span></Link>
-        </div>
+      <section id="home-products" aria-label="Product catalogue">
         <Suspense fallback={<Skeleton />}>
-          <ProductList categoryId="" limit={8} emptyMessage="Our solar equipment catalogue is coming soon." />
+          <HomeCatalogue searchParams={searchParams} />
         </Suspense>
       </section>
-      <SolarShowcase />
       <section className={styles.help}>
         <p className={styles.eyebrow}>A system that fits</p>
         <h2>Choosing an inverter or battery?</h2>

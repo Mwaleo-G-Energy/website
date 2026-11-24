@@ -22,13 +22,10 @@
 .heroActions { display: flex; flex-wrap: wrap; gap: 20px; }
 .secondary { display: inline-flex; min-height: 48px; align-items: center; padding: 12px 28px; border: 1px solid var(--sun); border-radius: 30px; color: var(--on-ink); }
 .mobileMenu { display: none; }
-.products, .help { max-width: 1248px; padding: 40px 24px; margin: auto; scroll-margin-top: 24px; }
-.sectionTitle { display: flex; justify-content: space-between; align-items: end; gap: 24px; }
-.sectionTitle h2, .help h2 { font-family: var(--font-display), sans-serif; font-size: clamp(26px, 3vw, 38px); font-weight: 800; line-height: 1.15; letter-spacing: -.03em; }
-.sectionTitle a, .help a { text-decoration: underline; text-underline-offset: 5px; min-height: 44px; display: inline-flex; align-items: center; }
+.help { max-width: 1248px; padding: 40px 24px; margin: auto; scroll-margin-top: 24px; }
 .help { border-top: 1px solid var(--muted); padding-block: 48px 64px; }
 .help p:not(.eyebrow) { margin-block: 20px; max-width: 48ch; }
-.hero a:focus-visible, .hero summary:focus-visible, .products a:focus-visible, .help a:focus-visible { outline: 2px solid currentColor; outline-offset: 5px; }
+.hero a:focus-visible, .hero summary:focus-visible, .help a:focus-visible { outline: 2px solid currentColor; outline-offset: 5px; }
 @media(max-width:1000px) { .desktopLinks { gap: 16px; } .desktopLinks a:nth-last-child(-n+2) { display: none; } }
 @media(max-width:700px) {
   .heroHeader, .heroCopy { width: calc(100% - 32px); }
@@ -49,7 +46,6 @@
   .heroCopy > p:not(.eyebrow) { font-size: 16px; margin-block: 24px 28px; }
   .heroActions { gap: 12px; }
   .primary, .secondary { padding-inline: 20px; }
-  .sectionTitle { align-items: start; flex-direction: column; gap: 12px; }
 }
 .heroCopy { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding-block: 48px 64px; }
 .hero a:focus-visible, .hero summary:focus-visible { outline: 2px solid currentColor; outline-offset: 5px; }
@@ -76,5 +72,4 @@
   .primary, .secondary { padding-inline: 20px; font-size: 14px; }
   .heroImage { object-position: 65% center; }
   .heroShade { background: rgb(10 30 20 / .72); }
-  .sectionTitle { flex-direction: column; align-items: flex-start; }
 }
