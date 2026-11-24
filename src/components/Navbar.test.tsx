@@ -110,10 +110,14 @@ describe("Navbar on a phone", () => {
     expect(icons.length).toBeGreaterThanOrEqual(2);
   });
 
-  it("does the same for the profile, bell, cart and search icons in the computer header", () => {
+  it("uses accessible profile and cart actions in the computer header without a notification icon", () => {
     const html = renderToStaticMarkup(<Navbar />);
     const desktop = html.slice(html.indexOf('data-testid="desktop-header"'));
-    expect((desktop.match(/<img[^>]*dark:invert[^>]*>/g) ?? []).length).toBeGreaterThanOrEqual(4);
+    expect(desktop).toContain('aria-label="Log in"');
+    expect(desktop).toContain('aria-label="Cart"');
+    expect(desktop).toContain('aria-haspopup="dialog"');
+    expect(desktop).not.toContain("notification.png");
+    expect(desktop.match(/h-10 w-10/g)).toHaveLength(2);
   });
 
   it("uses the supplied reverse logo without visual effects in dark mode", () => {
