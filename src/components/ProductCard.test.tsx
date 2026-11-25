@@ -50,11 +50,11 @@ describe("ProductCardView", () => {
     expect(html).toContain("Now KES 3,500");
   });
 
-  it("has one full-width navy button, drawn as text so it is not a button inside a link", () => {
+  it("has one full-width product link treatment, not a button nested inside the link", () => {
     const html = render(card());
     expect(html).not.toContain("<button");
-    expect(html).toContain("Add to cart");
-    expect(html).toContain("bg-brand-navy");
+    expect(html).toContain("View product");
+    expect(html).toContain("border-brand-black");
     expect(html).toContain("w-full");
   });
 
@@ -62,21 +62,21 @@ describe("ProductCardView", () => {
     expect(render(card({ compareAtLabel: "KES 4,375", discountPercent: 20 }))).not.toMatch(/pink|rose|red-/);
   });
 
-  it("fades the first photo on hover only when there is a second photo to show", () => {
+  it("reveals the alternate photo with a vertical wipe only when it exists", () => {
     const first = (html: string) => html.match(/<img[^>]*>/)?.[0] ?? "";
-    expect(first(render(card()))).toContain("md:group-hover:opacity-0");
-    expect(first(render(card({ hoverImageUrl: null })))).not.toContain("opacity-0");
+    expect(first(render(card()))).toContain("clip-path:inset(0_0_100%_0)");
+    expect(first(render(card({ hoverImageUrl: null })))).not.toContain("group-hover:[clip-path");
   });
 
   it("changes on hover only on devices that can hover, so a tap does not leave a card stuck", () => {
     const html = render(card());
     expect(html).not.toMatch(/(^|[\s"])group-hover:/);
-    expect(html).toContain("md:group-hover:bg-brand-gold");
+    expect(html).toContain("group-hover:bg-brand-black");
   });
 
   it("keeps the button look out of the link's spoken name, since the card only opens the product page", () => {
     const html = render(card());
-    expect(html).toMatch(/<span[^>]*aria-hidden="true"[^>]*>Add to cart<\/span>/);
+    expect(html).toMatch(/<span[^>]*aria-hidden="true"[^>]*>[\s\S]*?View product/);
   });
 
   it("shows the second photo on hover only when there is one", () => {

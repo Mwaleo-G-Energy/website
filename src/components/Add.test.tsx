@@ -13,7 +13,7 @@ const text = (html: string) => html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " "
 describe("Add (quantity row)", () => {
   it("puts the quantity stepper and the Add to Cart button on one row, lined up in the middle, with the button taking the rest of the width", () => {
     const html = render(5);
-    const row = html.match(/<div class="([^"]*)"[^>]*><div class="[^"]*rounded-3xl/)?.[1].split(" ") ?? [];
+    const row = html.match(/<div class="([^"]*)"[^>]*><div class="[^"]*bg-brand-cream/)?.[1].split(" ") ?? [];
     expect(row).toContain("flex");
     expect(row).toContain("items-center");
     expect(html).toMatch(/<button[^>]*class="[^"]*\bflex-1\b[^"]*"[^>]*>Add to Cart</);

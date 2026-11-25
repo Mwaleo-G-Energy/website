@@ -16,6 +16,17 @@ const render = (query = "", bounds?: { min: number; max: number }) => {
 };
 
 describe("Filter", () => {
+  it("keeps mobile controls collapsed behind one accessible, compact disclosure", () => {
+    const html = render();
+    expect(html).toMatch(/<button[^>]*aria-expanded="false"[^>]*>.*Filter &amp; sort/s);
+    expect(html).toContain('class="hidden flex-col');
+    expect(html).toContain("md:flex");
+  });
+
+  it("shows how many filter groups are active without opening the panel", () => {
+    expect(render("sort=asc+price&min=1000")).toContain("Filter &amp; sort · 2 active");
+  });
+
   it("offers sorting and a price range, each with a visible label", () => {
     const html = render();
     expect(html).toMatch(/<label[^>]*>Sort by<\/label>/);

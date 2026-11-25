@@ -25,7 +25,7 @@ describe("ProductImages", () => {
     const html = render(5);
     const frame = html.match(/<button[^>]*data-main-photo[^>]*>/)?.[0] ?? "";
     expect(frame).toContain("h-[min(");
-    expect(frame).toContain("lg:h-[500px]");
+    expect(frame).toContain("lg:h-[560px]");
     expect(frame).not.toContain(" h-[500px]");
   });
 

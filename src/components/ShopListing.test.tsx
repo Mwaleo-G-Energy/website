@@ -2,9 +2,10 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
 const products = vi.hoisted(() => vi.fn());
+const categoryProps = vi.hoisted(() => vi.fn());
 vi.mock("@/components/ProductList", () => ({ default: (props: unknown) => { products(props); return <div>Product grid</div>; } }));
 vi.mock("@/components/Filter", () => ({ default: () => <div>Price and sort controls</div> }));
-vi.mock("@/components/CategoryChips", () => ({ default: () => <nav>Category links</nav> }));
+vi.mock("@/components/CategoryChips", () => ({ default: (props: unknown) => { categoryProps(props); return <nav>Category links</nav>; } }));
 vi.mock("@/lib/wixClientServer", () => ({ wixClientServer: async () => ({ fetchWithAuth: vi.fn() }) }));
 vi.mock("@/lib/storeProducts", () => ({ getPriceBounds: async () => undefined }));
 import ShopListing from "./ShopListing";
@@ -17,6 +18,8 @@ describe("embedded shop listing", () => {
     expect(html).toMatch(/<h2[^>]*>Shop all products<\/h2>/);
     expect(html).not.toContain("BreadcrumbList");
     expect(html).toContain("Price and sort controls");
+    expect(html).toContain("text-3xl md:text-5xl");
+    expect(categoryProps).toHaveBeenLastCalledWith(expect.objectContaining({ compact: true }));
     expect(products).toHaveBeenLastCalledWith(expect.objectContaining({ searchParams }));
   });
 

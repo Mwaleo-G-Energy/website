@@ -55,10 +55,10 @@ const Add = ({
         {stockNote}
       </div>
       <div className="flex items-center gap-4">
-        <div className="bg-gray-100 rounded-3xl flex items-center justify-between w-32 h-11 px-1 flex-shrink-0">
+        <div className="flex h-11 w-32 flex-shrink-0 items-center justify-between border border-gray-300 bg-brand-cream px-1 dark:border-gray-600">
           <button
             aria-label="Decrease quantity"
-            className="w-10 h-10 cursor-pointer text-xl disabled:cursor-not-allowed disabled:opacity-20"
+            className="h-10 w-10 cursor-pointer text-xl text-gray-800 transition-colors hover:text-brand-leaf-ink disabled:cursor-not-allowed disabled:opacity-20 dark:text-gray-100"
             onClick={() => handleQuantity("d")}
             disabled={quantity === 1}
           >
@@ -67,7 +67,7 @@ const Add = ({
           <span className="font-medium" aria-live="polite">{quantity}</span>
           <button
             aria-label="Increase quantity"
-            className="w-10 h-10 cursor-pointer text-xl disabled:cursor-not-allowed disabled:opacity-20"
+            className="h-10 w-10 cursor-pointer text-xl text-gray-800 transition-colors hover:text-brand-leaf-ink disabled:cursor-not-allowed disabled:opacity-20 dark:text-gray-100"
             onClick={() => handleQuantity("i")}
             disabled={quantity === stockNumber}
           >
@@ -77,7 +77,7 @@ const Add = ({
         <button
           onClick={handleAddToCart}
           disabled={isLoading || stockNumber < 1}
-          className="flex-1 h-11 text-sm rounded-3xl bg-brand-navy text-white px-4 hover:bg-brand-gold hover:text-brand-navy transition-colors disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-500"
+          className="h-11 flex-1 bg-brand-leaf px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-leaf-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-500 dark:text-white"
         >
           Add to Cart
         </button>

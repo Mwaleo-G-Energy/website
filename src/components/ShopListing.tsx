@@ -37,8 +37,8 @@ const ShopListing = async ({ category, categories, searchParams, pendingCategory
           ),
         }}
       />}
-      <div className="pt-8 pb-6">
-        <Heading className="font-display text-4xl font-bold md:text-5xl mb-2">
+      <div className={embedded ? "pt-5 pb-3 md:pt-8 md:pb-6" : "pt-8 pb-6"}>
+        <Heading className={`font-display ${embedded ? "text-3xl md:text-5xl" : "text-4xl md:text-5xl"} font-bold mb-2`}>
           {searched ? `Results for “${searched}”` : category?.name || "Shop all products"}
         </Heading>
         <p className="text-gray-600">
@@ -50,13 +50,13 @@ const ShopListing = async ({ category, categories, searchParams, pendingCategory
         </p>
       </div>
 
-      <CategoryChips chips={chips} activeSlug={searched ? null : category ? category.slug : ""} />
+      <CategoryChips chips={chips} activeSlug={searched ? null : category ? category.slug : ""} compact={embedded} />
 
       {pendingCategory ? (
         <p className="py-10 text-gray-700">Coming soon.</p>
       ) : (
         <>
-          <div className="mt-6 border-y border-gray-200 py-5">
+          <div className={`${embedded ? "mt-3 py-2 md:mt-6 md:py-5" : "mt-6 py-5"} border-y border-gray-200`}>
             <Suspense fallback={<div className="h-16" />}>
               <Filter bounds={bounds} />
             </Suspense>

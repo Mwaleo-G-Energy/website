@@ -16,6 +16,7 @@ describe("parseDescription", () => {
     const parsed = parseDescription(casio);
     expect(parsed?.introHtml).toBe("<p>An analogue quartz men's watch with a black dial and a day and date display.</p>");
     expect(parsed?.features).toEqual(["50-meter water resistance", "Genuine leather band"]);
+    expect(parsed?.featureCards).toEqual([{ title: "50-meter water resistance", description: "" }, { title: "Genuine leather band", description: "" }]);
     expect(parsed?.specs).toEqual([
       { label: "Case size (L x W x H)", value: "46.6 x 39.9 x 8.9 mm" },
       { label: "Weight", value: "52 g" },
@@ -75,5 +76,22 @@ describe("parseDescription", () => {
     const html = "<p><b>Specifications</b></p><ul><li>Weight: 22 g</li></ul><p>Delivery across Kenya.</p>";
     expect(parseDescription(html)?.trailingHtml).toBe("<p>Delivery across Kenya.</p>");
     expect(parseDescription(casio)?.trailingHtml).toBe("");
+  });
+
+  it("splits product advantages, specs, expansion capacity and application cases into separate sections", () => {
+    const html = [
+      "<p>48 V battery for home backup.</p>",
+      "<h2>What sets it apart</h2><ul><li><strong>LiFePO4 cells</strong> — long service life</li></ul>",
+      "<h2>Specifications</h2><ul><li>Nominal energy: 5.12 kWh</li><li>Voltage: 51.2 V</li></ul>",
+      "<h2>Superior System Expansion Capability</h2><ul><li><strong>5.12 kWh</strong> — one battery</li><li><strong>61.44 kWh</strong> — up to 12 units</li></ul>",
+      "<h2>Application Scenarios</h2><ul><li><strong>Home</strong> — evening backup</li><li><strong>Shop</strong> — keep essentials running</li></ul>",
+    ].join("");
+    const parsed = parseDescription(html);
+    expect(parsed?.introHtml).toBe("<p>48 V battery for home backup.</p>");
+    expect(parsed?.featureCards).toEqual([{ title: "LiFePO4 cells", description: "long service life" }]);
+    expect(parsed?.specs).toEqual([{ label: "Nominal energy", value: "5.12 kWh" }, { label: "Voltage", value: "51.2 V" }]);
+    expect(parsed?.expansion).toEqual([{ title: "5.12 kWh", description: "one battery" }, { title: "61.44 kWh", description: "up to 12 units" }]);
+    expect(parsed?.useCases).toEqual([{ title: "Home", description: "evening backup" }, { title: "Shop", description: "keep essentials running" }]);
+    expect(parsed?.trailingHtml).toBe("");
   });
 });
