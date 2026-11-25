@@ -71,6 +71,20 @@ describe("ProductSpecs", () => {
     expect(render()).not.toContain("Key features");
   });
 
+  it("renders product advantages, expansion capacity and applications as separate sections", () => {
+    const html = render({
+      featureCards: [{ title: "5.12 kWh storage", description: "100 Ah capacity." }],
+      expansion: [{ title: "61.44 kWh", description: "Up to 12 units in parallel." }],
+      useCases: [{ title: "Home", description: "Size the system for essential loads." }],
+    });
+    expect(html).toContain("What sets it apart");
+    expect(html).toContain("5.12 kWh storage");
+    expect(html).toContain("System expansion capability");
+    expect(html).toContain("61.44 kWh");
+    expect(html).toContain("Where it works");
+    expect(html).toContain("Size the system for essential loads.");
+  });
+
   it("starts every value with a capital letter on screen, though the data writes some in lower case", () => {
     const values = render({ specs: [{ label: "Band", value: "genuine leather" }] }).match(/<dd[^>]*>/g) ?? [];
     expect(values).toHaveLength(1);

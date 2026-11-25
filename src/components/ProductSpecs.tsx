@@ -1,12 +1,15 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import type { SpecRow } from "@/lib/productSpecs";
+import type { ProductDetailCard, SpecRow } from "@/lib/productSpecs";
 import { rowDelayMs, startingPhase, type Phase } from "@/lib/specReveal";
 
 type Props = {
   specs: SpecRow[];
   features?: string[];
+  featureCards?: ProductDetailCard[];
+  expansion?: ProductDetailCard[];
+  useCases?: ProductDetailCard[];
 };
 
 // The column this sits in is narrow on a computer and wide on a tablet, so the rows follow the box, not the screen.
@@ -29,7 +32,7 @@ export const rowClass = (phase: Phase) =>
     phase === "shown" ? "transition-[opacity,transform] duration-500 ease-out" : "",
   ].join(" ");
 
-export default function ProductSpecs({ specs, features = [] }: Props) {
+export default function ProductSpecs({ specs, features = [], featureCards = [], expansion = [], useCases = [] }: Props) {
   const headingId = useId();
   const table = useRef<HTMLElement>(null);
   const [phase, setPhase] = useState<Phase>("static");
@@ -62,15 +65,18 @@ export default function ProductSpecs({ specs, features = [] }: Props) {
 
   return (
     <div className="flex flex-col gap-6">
-      {features.length > 0 && (
-        <ul aria-label="Key features" className="flex flex-col gap-2">
-          {features.map((feature, index) => (
-            <li key={index} className="flex items-start gap-3 text-sm text-gray-700">
-              <span aria-hidden="true" className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-gold" />
-              {feature}
-            </li>
-          ))}
-        </ul>
+      {(featureCards.length > 0 || features.length > 0) && (
+        <section aria-labelledby={`${headingId}-features`} aria-label="Key features">
+          <h3 id={`${headingId}-features`} className="font-display text-2xl font-semibold text-gray-900">What sets it apart</h3>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {(featureCards.length ? featureCards : features.map((title) => ({ title, description: "" }))).map((card, index) => (
+              <article key={`${card.title}-${index}`} className="rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900">
+                <h4 className="font-semibold text-gray-900 dark:text-gray-100">{card.title}</h4>
+                {card.description && <p className="mt-2 text-sm leading-relaxed text-gray-600 dark:text-gray-300">{card.description}</p>}
+              </article>
+            ))}
+          </div>
+        </section>
       )}
 
       <section ref={table} aria-labelledby={headingId}>
@@ -87,6 +93,34 @@ export default function ProductSpecs({ specs, features = [] }: Props) {
           ))}
         </dl>
       </section>
+
+      {expansion.length > 0 && (
+        <section aria-labelledby={`${headingId}-expansion`}>
+          <h3 id={`${headingId}-expansion`} className="font-display text-2xl font-semibold text-gray-900">System expansion capability</h3>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {expansion.map((card, index) => (
+              <article key={`${card.title}-${index}`} className="rounded-xl bg-brand-cream p-5 dark:bg-gray-800">
+                <h4 className="font-display text-2xl font-bold text-brand-leaf-ink dark:text-brand-gold">{card.title}</h4>
+                {card.description && <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">{card.description}</p>}
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {useCases.length > 0 && (
+        <section aria-labelledby={`${headingId}-applications`}>
+          <h3 id={`${headingId}-applications`} className="font-display text-2xl font-semibold text-gray-900">Where it works</h3>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {useCases.map((card, index) => (
+              <article key={`${card.title}-${index}`} className="border-l-2 border-brand-gold py-1 pl-4">
+                <h4 className="font-semibold text-gray-900 dark:text-gray-100">{card.title}</h4>
+                {card.description && <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">{card.description}</p>}
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

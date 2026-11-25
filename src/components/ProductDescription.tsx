@@ -6,7 +6,7 @@ const prose = (html: string) => (
   <div className="text-gray-600 leading-relaxed" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(html) }} />
 );
 
-/** A description with a "Specifications" list is shown as intro, features and a spec table. Any other description is shown as it always was. */
+/** Structured Wix descriptions become branded product sections while unstructured descriptions remain readable prose. */
 export default function ProductDescription({ html }: { html: string }) {
   const parsed = parseDescription(html);
   if (!parsed) return prose(html);
@@ -14,7 +14,13 @@ export default function ProductDescription({ html }: { html: string }) {
   return (
     <div className="flex flex-col gap-6">
       {parsed.introHtml && prose(parsed.introHtml)}
-      <ProductSpecs specs={parsed.specs} features={parsed.features} />
+      <ProductSpecs
+        specs={parsed.specs}
+        features={parsed.features}
+        featureCards={parsed.featureCards}
+        expansion={parsed.expansion}
+        useCases={parsed.useCases}
+      />
       {parsed.trailingHtml && prose(parsed.trailingHtml)}
     </div>
   );
