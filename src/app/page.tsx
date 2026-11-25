@@ -54,16 +54,16 @@ export default function HomePage({ searchParams = {} }: { searchParams?: SearchP
           </nav>
         </header>
         <div className={styles.heroCopy}>
-          <p className={styles.eyebrow}>Solar equipment for your next system</p>
-          <h1 id="hero-title">Off-grid solar<br />and backup<br /><span>power.</span></h1>
-          <p>Find Felicity Solar inverters, lithium batteries and solar equipment for your home or business. Talk to Mwaleo about the right setup for you.</p>
+          <p className={styles.eyebrow}>Felicity Solar equipment for home and business</p>
+          <h1 id="hero-title">Shop solar, batteries, inverters <span>&amp; accessories.</span></h1>
+          <p>Find solar equipment for your home or business, and get help choosing a system that fits.</p>
           <div className={styles.heroActions}>
-            <Link href="#shop-categories" className={styles.primary}>Shop solar equipment</Link>
-            <Link href="/contact" className={styles.secondary}>Talk to Mwaleo</Link>
+            <Link href="#home-products" className={styles.primary}>Shop solar accessories</Link>
+            <Link href="/contact" className={styles.secondary}>Request solar installation</Link>
           </div>
         </div>
       </section>
-      <section aria-labelledby="shop-categories" className="px-4 py-12 md:px-8 md:py-16 lg:px-16 xl:px-32 2xl:px-64">
+      <section aria-labelledby="shop-categories" className={`${styles.categorySection} px-4 py-12 md:px-8 md:py-16 lg:px-16 xl:px-32 2xl:px-64`}>
         <h2 id="shop-categories" className="mb-6 font-display text-3xl font-bold">Shop by category</h2>
         <CategoryCarousel categories={LAUNCH_CATEGORIES} />
       </section>

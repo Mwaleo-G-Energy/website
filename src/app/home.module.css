@@ -1,5 +1,15 @@
 :global(body):has(.hero) :global([data-home-navbar]) { display: none; }
-.hero { position: relative; isolation: isolate; min-height: 100svh; display: flex; flex-direction: column; color: var(--on-ink); background: var(--ink); }
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  color: var(--on-ink);
+  background: var(--ink);
+}
+
 .heroImage { z-index: -2; object-fit: cover; object-position: center; }
 .heroShade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgb(10 30 20 / .85), rgb(20 24 27 / .4) 55%, rgb(20 24 27 / .12)); }
 .heroHeader, .heroCopy { width: min(1280px, calc(100% - 64px)); margin-inline: auto; }
@@ -13,60 +23,54 @@
 .navActions { display: flex; gap: 12px; align-items: center; }
 .navActions button { color: var(--ink); }
 .contact, .primary { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; padding: 12px 28px; border-radius: 30px; background: var(--sun); color: var(--ink); font-weight: 500; }
-.heroCopy { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding-block: 72px 80px; }
+.heroCopy { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding-block: 64px 80px; }
 .eyebrow { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 16px; }
 .heroCopy .eyebrow { color: var(--sun); }
-.hero h1 { font-family: var(--font-display), sans-serif; font-size: clamp(44px, 4.5vw, 76px); font-weight: 800; line-height: 1.12; letter-spacing: -.035em; }
+.hero h1 { max-width: 20ch; font-family: var(--font-display), sans-serif; font-size: clamp(44px, 4.5vw, 76px); font-weight: 800; line-height: 1.12; letter-spacing: -.035em; }
 .hero h1 span { color: var(--sun); }
-.heroCopy > p:not(.eyebrow) { max-width: 56ch; margin-block: 28px 40px; font-size: 17px; line-height: 1.7; }
-.heroActions { display: flex; flex-wrap: wrap; gap: 20px; }
-.secondary { display: inline-flex; min-height: 48px; align-items: center; padding: 12px 28px; border: 1px solid var(--sun); border-radius: 30px; color: var(--on-ink); }
+.heroCopy > p:not(.eyebrow) { max-width: 56ch; margin-block: 24px 32px; font-size: 17px; line-height: 1.7; }
+.heroActions { display: flex; flex-wrap: wrap; gap: 16px; }
+.secondary { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; padding: 12px 24px; border: 1px solid var(--sun); border-radius: 30px; color: var(--on-ink); }
 .mobileMenu { display: none; }
-.help { max-width: 1248px; padding: 40px 24px; margin: auto; scroll-margin-top: 24px; }
-.help { border-top: 1px solid var(--muted); padding-block: 48px 64px; }
+.help { max-width: 1248px; padding: 40px 24px; margin: auto; scroll-margin-top: 24px; border-top: 1px solid var(--muted); padding-block: 48px 64px; }
 .help p:not(.eyebrow) { margin-block: 20px; max-width: 48ch; }
 .hero a:focus-visible, .hero summary:focus-visible, .help a:focus-visible { outline: 2px solid currentColor; outline-offset: 5px; }
-@media(max-width:1000px) { .desktopLinks { gap: 16px; } .desktopLinks a:nth-last-child(-n+2) { display: none; } }
-@media(max-width:700px) {
-  .heroHeader, .heroCopy { width: calc(100% - 32px); }
-  .heroNav { padding: 8px 16px; gap: 8px; border-radius: 20px; }
-  .logo img { width: 120px; height: 50px; }
-  .desktopLinks, .contact { display: none; }
-  .navActions { margin-left: auto; }
-  .mobileMenu { display: block; }
-  .mobileMenu summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-weight: 500; }
-  .mobileMenu > div { position: absolute; top: calc(100% + 8px); left: 0; right: 0; z-index: 2; background: var(--paper); padding: 16px; border-radius: 12px; border: 1px solid var(--line); }
-  .mobileMenu a { display: block; padding: 12px; }
-  .heroCopy { padding: 64px 8px 112px; }
-  .heroImage { object-position: 65% center; }
-  .heroShade { background: rgb(10 30 20 / .68); }
-  .hero h1 { font-size: clamp(40px, 10vw, 56px); }
-  .heroCopy .eyebrow { max-width: 26ch; }
-  .heroCopy > p:not(.eyebrow) { font-size: 16px; margin-block: 24px 28px; }
-  .heroActions { gap: 12px; }
-  .primary, .secondary { padding-inline: 20px; }
+.categorySection { display: block; }
+
+@media (max-width: 1000px) {
+  .desktopLinks { gap: 16px; }
+  .desktopLinks a:nth-last-child(-n+2) { display: none; }
 }
-.heroCopy { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding-block: 48px 64px; }
-.hero a:focus-visible, .hero summary:focus-visible { outline: 2px solid currentColor; outline-offset: 5px; }
-#shop-categories { scroll-margin-top: 24px; }
-@media(max-width:900px) {
+
+@media (max-width: 900px) {
   .desktopLinks { display: none; }
   .mobileMenu { display: block; }
   .mobileMenu summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; padding: 8px; }
   .mobileMenu > div { position: absolute; left: 16px; right: 16px; top: calc(100% + 8px); z-index: 5; display: grid; background: var(--paper); color: var(--ink); padding: 12px; border-radius: 4px; border: 1px solid var(--line); }
   .mobileMenu a { padding: 12px; }
 }
-@media(max-width:600px) {
+
+@media (max-width: 700px) {
+  .hero { min-height: 55svh; }
   .heroHeader, .heroCopy { width: calc(100% - 40px); }
+  .heroHeader { padding-top: 20px; }
   .heroNav { padding: 6px 12px; gap: 8px; border-radius: 16px; }
   .logo img { width: 128px; height: 54px; }
+  .desktopLinks, .contact { display: none; }
   .navActions { margin-left: auto; gap: 0; }
-  .navActions .contact { display: none; }
-  .heroCopy { padding-block: 44px 110px; }
-  .hero h1 { font-size: clamp(38px, 10vw, 52px); }
-  .heroCopy > p:not(.eyebrow) { font-size: 16px; margin-block: 20px 28px; line-height: 1.6; }
-  .heroActions { gap: 12px; }
-  .primary, .secondary { padding-inline: 20px; font-size: 14px; }
+  .mobileMenu summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-weight: 500; }
+  .mobileMenu > div { left: 0; right: 0; }
+  .heroCopy { flex: 1; padding: clamp(30px, 6svh, 52px) 4px 32px; }
   .heroImage { object-position: 65% center; }
-  .heroShade { background: rgb(10 30 20 / .72); }
+  .heroShade { background: rgb(10 30 20 / .68); }
+  .hero h1 { max-width: 16ch; font-size: clamp(32px, 8.5vw, 42px); line-height: 1.08; letter-spacing: -.03em; }
+  .heroCopy .eyebrow { max-width: 32ch; margin-bottom: 10px; font-size: 11px; }
+  .heroCopy > p:not(.eyebrow) { max-width: 40ch; margin-block: 14px 20px; font-size: 15px; line-height: 1.45; }
+  .heroActions { gap: 8px; }
+  .primary, .secondary { min-height: 44px; padding: 10px 12px; font-size: 12px; white-space: nowrap; }
+  .categorySection { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero * { scroll-behavior: auto; }
 }
