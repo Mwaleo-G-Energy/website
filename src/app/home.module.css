@@ -25,7 +25,6 @@
 .contact, .primary { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; padding: 12px 28px; border-radius: 30px; background: var(--sun); color: var(--ink); font-weight: 500; }
 .heroCopy { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding-block: 64px 80px; }
 .eyebrow { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 16px; }
-.heroCopy .eyebrow { color: var(--sun); }
 .hero h1 { max-width: 20ch; font-family: var(--font-display), sans-serif; font-size: clamp(44px, 4.5vw, 76px); font-weight: 800; line-height: 1.12; letter-spacing: -.035em; }
 .hero h1 span { color: var(--sun); }
 .heroCopy > p:not(.eyebrow) { max-width: 56ch; margin-block: 24px 32px; font-size: 17px; line-height: 1.7; }
@@ -60,12 +59,11 @@
   .navActions { margin-left: auto; gap: 0; }
   .mobileMenu summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-weight: 500; }
   .mobileMenu > div { left: 0; right: 0; }
-  .heroCopy { flex: 1; padding: clamp(30px, 6svh, 52px) 4px 32px; }
+  .heroCopy { flex: 1; padding: clamp(20px, 4svh, 34px) 4px 28px; }
   .heroImage { object-position: 65% center; }
   .heroShade { background: rgb(10 30 20 / .68); }
   .hero h1 { max-width: 16ch; font-size: clamp(32px, 8.5vw, 42px); line-height: 1.08; letter-spacing: -.03em; }
-  .heroCopy .eyebrow { max-width: 32ch; margin-bottom: 10px; font-size: 11px; }
-  .heroCopy > p:not(.eyebrow) { max-width: 40ch; margin-block: 14px 20px; font-size: 15px; line-height: 1.45; }
+  .heroCopy > p:not(.eyebrow) { max-width: 40ch; margin-block: 12px 18px; font-size: 15px; line-height: 1.45; }
   .heroActions { gap: 8px; }
   .primary, .secondary { min-height: 44px; padding: 10px 12px; font-size: 12px; white-space: nowrap; }
   .categorySection { display: none; }

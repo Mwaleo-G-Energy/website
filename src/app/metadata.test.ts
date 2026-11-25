@@ -121,6 +121,7 @@ describe("home storefront", () => {
   it("introduces the solar range and links to the shop", () => {
     const home = read("src/app/page.tsx");
     expect(home).toContain("Shop solar, batteries, inverters <span>&amp; accessories.</span>");
+    expect(home).not.toContain("Felicity Solar equipment for home and business");
     expect(home).toContain('href="/shop"');
     expect(home).toContain('href="#home-products"');
     expect(home).toContain("Shop solar accessories</Link>");

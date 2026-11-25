@@ -11,6 +11,7 @@ import { Metadata } from "next";
 import { breadcrumbJsonLd, jsonLdScript, productJsonLd, productMetadata } from "@/lib/seo";
 import type { SeoTag } from "@/lib/categoryPages";
 import { SITE_URL } from "@/lib/site";
+import Link from "next/link";
 
 type Props = {
     params: { slug: string };
@@ -57,7 +58,7 @@ const SinglePage = async ({ params }: Props) => {
     }
 
     return (
-        <div className="px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 relative flex flex-col lg:flex-row gap-6 lg:gap-16 py-4 lg:py-8">
+        <main className="mx-auto max-w-[1440px] px-4 pb-10 pt-5 md:px-8 md:pt-8 lg:px-16 lg:pb-20 xl:px-24">
             {/* What search engines are told about the product, and where it sits in the shop */}
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(productJsonLd(seoOf(product, slug))) }} />
             <script
@@ -73,29 +74,42 @@ const SinglePage = async ({ params }: Props) => {
                 }}
             />
             {/* IMG */}
-            <div className="w-full lg:w-1/2 lg:sticky lg:top-24 h-max min-w-0">
+            <div className="mb-5 flex items-center gap-2 text-xs text-gray-500 sm:mb-8">
+                <Link href="/shop" className="underline decoration-brand-gold underline-offset-4 hover:text-brand-leaf-ink">Shop</Link>
+                <span aria-hidden="true">/</span>
+                <span className="line-clamp-1 text-gray-700 dark:text-gray-300">{product.name}</span>
+            </div>
+            <div className="grid items-start gap-7 lg:grid-cols-[minmax(0,1.05fr)_minmax(360px,0.8fr)] lg:gap-14">
+            <div className="min-w-0 lg:sticky lg:top-8">
                 <ProductImages key={product._id} items={product.media?.items} name={product.name ?? undefined} />
             </div>
 
             {/* TEXTS */}
-            <div className="w-full lg:w-1/2 flex flex-col gap-6">
-                <h1 className="font-display text-2xl font-bold leading-tight sm:text-4xl">{product.name}</h1>
+            <div className="flex min-w-0 flex-col gap-5 sm:gap-7">
+                <div className="border-b border-gray-200 pb-5 dark:border-gray-700">
+                    <p className="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.12em] text-brand-leaf-ink dark:text-brand-gold">
+                        <span className="h-2 w-2 rounded-full bg-brand-leaf dark:bg-brand-gold" />
+                        Felicity Solar · Mwaleo catalogue
+                    </p>
+                    <h1 className="font-display text-2xl font-bold leading-tight text-gray-900 sm:text-4xl">{product.name}</h1>
+                    <p className="mt-3 text-sm text-gray-600 dark:text-gray-300">Authorised Felicity Solar dealer in Nairobi</p>
+                </div>
 
                 {/* Price */}
                 {product.price?.price === product.price?.discountedPrice ? (
-                    <h2 className="font-semibold text-3xl">KES {product.price?.price}</h2>
+                    <h2 className="font-display text-3xl font-bold text-brand-leaf-ink dark:text-brand-gold">KES {product.price?.price}</h2>
                 ) : (
                     <div className="flex items-center gap-4">
-                        <h3 className="text-xl text-gray-500 line-through">
+                        <h3 className="text-base text-gray-500 line-through">
                             KES {product.price?.price}
                         </h3>
-                        <h2 className="font-semibold text-3xl text-brand-navy">
+                        <h2 className="font-display text-3xl font-bold text-brand-leaf-ink dark:text-brand-gold">
                             KES {product.price?.discountedPrice}
                         </h2>
                     </div>
                 )}
 
-                <div className="h-[2px] bg-gray-100" />
+                <div className="h-px bg-gray-200 dark:bg-gray-700" />
 
                 {/* Add to Cart / Customize, with Order on WhatsApp right under it */}
                 <div className="flex flex-col gap-3">
@@ -123,7 +137,7 @@ const SinglePage = async ({ params }: Props) => {
                     />
                 </div>
 
-                <div className="h-[2px] bg-gray-100" />
+                <div className="h-px bg-gray-200 dark:bg-gray-700" />
 
                 {product.description && <ProductDescription html={product.description} />}
 
@@ -140,11 +154,12 @@ const SinglePage = async ({ params }: Props) => {
                     </div>
                 ))}
 
-                <div className="h-[2px] bg-gray-100" />
+                <div className="h-px bg-gray-200 dark:bg-gray-700" />
 
                 
             </div>
-        </div>
+            </div>
+        </main>
     );
 };
 

@@ -86,10 +86,10 @@ describe("BottomTabBar look", () => {
     expect(new Set(svgs).size).toBe(4);
   });
 
-  it("shows the labels in small spaced capitals", () => {
+  it("shows the labels in a compact, sentence-case style", () => {
     const label = tabs().match(/<span class="([^"]*)">Home<\/span>/)?.[1].split(" ") ?? [];
-    expect(label).toContain("uppercase");
-    expect(label.some((c) => c.startsWith("tracking-"))).toBe(true);
+    expect(label).not.toContain("uppercase");
+    expect(label).toContain("font-semibold");
     expect(label).toContain("text-[10px]");
   });
 
@@ -101,18 +101,17 @@ describe("BottomTabBar look", () => {
     expect(wrapper).toContain("pointer-events-none");
     expect(wrapper).toContain("env(safe-area-inset-bottom)");
     const nav = html.match(/<nav [^>]*>/)?.[0] ?? "";
-    expect(nav).toContain("rounded-[1.75rem]");
+    expect(nav).toContain("rounded-2xl");
     expect(nav).toContain("pointer-events-auto");
     expect(nav).toMatch(/shadow-/);
-    expect(nav).toMatch(/ring-1/);
-    expect(nav).not.toContain("border-t");
+    expect(nav).toContain("border-t-2");
   });
 
-  it("is a warm white dock in the light theme and a lifted navy dock with a gold edge in the dark theme", () => {
+  it("uses the Mwaleo leaf accent in light mode and the sun accent in dark mode", () => {
     const nav = tabs().match(/<nav [^>]*>/)?.[0] ?? "";
-    expect(nav).toContain("bg-[#FFFDF8]");
-    expect(nav).toContain("dark:bg-[#1B1F33]");
-    expect(nav).toContain("dark:ring-brand-gold/40");
+    expect(nav).toContain("border-t-brand-leaf");
+    expect(nav).toContain("dark:border-t-brand-gold");
+    expect(nav).toContain("dark:bg-[#1f2428]");
   });
 
   it("is never the brand navy of the Add to cart buttons, so the two do not compete", () => {
@@ -125,12 +124,12 @@ describe("BottomTabBar look", () => {
     expect(tabs()).not.toMatch(/backdrop-blur/);
   });
 
-  it("marks the current tab in navy (gold in the dark theme) with a soft gold pill behind the icon", () => {
+  it("marks the current tab in leaf green (sun in dark mode) with a soft accent behind the icon", () => {
     const current = tabs("/").match(/<a [^>]*aria-current="page"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? "";
-    expect(current).toContain("text-[#1E2235]");
+    expect(current).toContain("text-brand-leaf-ink");
     expect(current).toContain("dark:text-brand-gold");
-    expect(current).toContain("bg-brand-gold/25");
-    expect(current).toContain("dark:bg-brand-gold/15");
+    expect(current).toContain("bg-brand-leaf/10");
+    expect(current).toContain("dark:bg-brand-gold/10");
     expect(current).not.toMatch(/text-gray-600/);
     const other = tabs("/").match(/<a [^>]*href="\/cart"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? "";
     expect(other).not.toMatch(/bg-brand-gold/);
@@ -161,8 +160,8 @@ describe("BottomTabBar look", () => {
     expect(full).toContain('data-cart-count="3"');
     const badge = full.match(/<span data-cart-count[^>]*>/)?.[0] ?? "";
     expect(badge).toContain("bg-brand-gold");
-    expect(badge).toContain("ring-[#FFFDF8]");
-    expect(badge).toContain("dark:ring-[#1B1F33]");
+    expect(badge).toContain("ring-white");
+    expect(badge).toContain("dark:ring-[#1f2428]");
   });
 });
 

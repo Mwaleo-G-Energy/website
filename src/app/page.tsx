@@ -54,7 +54,6 @@ export default function HomePage({ searchParams = {} }: { searchParams?: SearchP
           </nav>
         </header>
         <div className={styles.heroCopy}>
-          <p className={styles.eyebrow}>Felicity Solar equipment for home and business</p>
           <h1 id="hero-title">Shop solar, batteries, inverters <span>&amp; accessories.</span></h1>
           <p>Find solar equipment for your home or business, and get help choosing a system that fits.</p>
           <div className={styles.heroActions}>

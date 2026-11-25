@@ -7,3 +7,5 @@ The supplied Mwaleo Green Energy brand system governs the paper, stone, ink, sun
 The template's rounded navigation and pill-shaped hero actions override the usual 4 px corner limit for this homepage proposal. The template photograph is a visual illustration and makes no claim about a Mwaleo installation. Navigation and copy use Mwaleo's catalogue and business details.
 
 The saved reference is `F:\Illustriober Cr\Mwaleo Green Energy\Research\Solor – Solar Energy Elementor WordPress Theme.html`. Its hero photograph was retrieved from the image URL referenced in that saved page.
+
+The owner supplied additional mobile shop references on 25 November 2026 and requested branded product cards, product details and a mobile navigation redesign. These surfaces use the same token palette and typography, with a restrained square-corner product layout; the inset rounded homepage navigation exception does not extend to the shop.
