@@ -130,7 +130,7 @@ describe("home storefront", () => {
     expect(home).not.toContain("<Slider");
     expect(home).toContain("/solar/solar-technician-hero.jpg");
     expect(carousel).toContain("Project spotlight");
-    expect(carousel).toContain("owner-approved project photos and location details");
+    expect(carousel).toContain("Owner-approved project photos and location details");
     expect(home).toContain("<CategoryCarousel categories={LAUNCH_CATEGORIES}");
     expect(home).not.toContain("styles.topline");
     expect(home.indexOf("Shop by category")).toBeGreaterThan(home.indexOf("<HeroCarousel />"));
