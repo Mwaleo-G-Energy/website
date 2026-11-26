@@ -11,6 +11,7 @@ import Skeleton from "@/components/Skeleton";
 import Link from "next/link";
 import { Suspense } from "react";
 import { jsonLdScript, organizationJsonLd, websiteJsonLd } from "@/lib/seo";
+import HeroCarousel from "@/components/HeroCarousel";
 
 export const metadata = { alternates: { canonical: "/" } };
 
@@ -32,7 +33,7 @@ export default function HomePage({ searchParams = {} }: { searchParams?: SearchP
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(organizationJsonLd()) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(websiteJsonLd()) }} />
       <section className={styles.hero} data-home-hero aria-labelledby="hero-title">
-        <Image src="/solar/solar-technician-hero.jpg" alt="Solar technician working on rooftop panels" fill sizes="100vw" priority className={styles.heroImage} />
+        <Image src="/solar/solar-technician-hero.jpg" alt="" fill sizes="100vw" priority className={styles.heroImage} />
         <div className={styles.heroShade} />
         <header className={styles.heroHeader}>
           <nav className={styles.heroNav} aria-label="Homepage navigation">
@@ -53,14 +54,7 @@ export default function HomePage({ searchParams = {} }: { searchParams?: SearchP
             </details>
           </nav>
         </header>
-        <div className={styles.heroCopy}>
-          <h1 id="hero-title">Shop solar, batteries, inverters <span>&amp; accessories.</span></h1>
-          <p>Find solar equipment for your home or business, and get help choosing a system that fits.</p>
-          <div className={styles.heroActions}>
-            <Link href="#home-products" className={styles.primary}>Shop solar accessories</Link>
-            <Link href="/contact" className={styles.secondary}>Request solar installation</Link>
-          </div>
-        </div>
+        <HeroCarousel />
       </section>
       <section aria-labelledby="shop-categories" className={`${styles.categorySection} px-4 py-12 md:px-8 md:py-16 lg:px-16 xl:px-32 2xl:px-64`}>
         <h2 id="shop-categories" className="mb-6 font-display text-3xl font-bold">Shop by category</h2>
