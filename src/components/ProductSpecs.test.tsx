@@ -51,10 +51,11 @@ describe("ProductSpecs", () => {
     expect(html).toMatch(/<span[^>]*data-spec-line[^>]*motion-reduce:transition-none/);
   });
 
-  it("stacks the label over the value in a narrow box and sets them side by side in a wide one", () => {
+  it("uses a compact two-column grid with labels above values", () => {
     const html = render();
-    expect(html).toContain("[container-type:inline-size]");
-    expect(html).toMatch(/\[@container\(min-width:[\d.]+rem\)\]:grid-cols-\[/);
+    expect(html).toContain('data-spec-grid=""');
+    expect(html).toContain('data-spec-cell=""');
+    expect(html).toContain("text-[10px]");
   });
 
   it("sets the heading in the shop's display font, with a short gold rule under it", () => {

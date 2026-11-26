@@ -1,0 +1,23 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-block: 1px solid var(--line);
+}
+
+.cell {
+  min-width: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0.7rem 0.65rem;
+}
+
+.cell:nth-child(odd) {
+  border-right: 1px solid var(--line);
+}
+
+.cell:last-child {
+  border-bottom: 0;
+}
+
+.cell:last-child:nth-child(odd) {
+  border-right: 0;
+}

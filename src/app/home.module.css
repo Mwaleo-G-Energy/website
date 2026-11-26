@@ -12,7 +12,7 @@
 
 .heroImage { z-index: -2; object-fit: cover; object-position: center; }
 .heroShade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgb(10 30 20 / .85), rgb(20 24 27 / .4) 55%, rgb(20 24 27 / .12)); }
-.heroHeader, .heroCopy { width: min(1280px, calc(100% - 64px)); margin-inline: auto; }
+.heroHeader, .heroCarousel { width: min(1280px, calc(100% - 64px)); margin-inline: auto; }
 .heroHeader { padding-top: clamp(24px, 4vh, 40px); }
 .heroNav { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 12px 24px; border-radius: 28px; background: var(--paper); color: var(--ink); }
 .logo { flex-shrink: 0; }
@@ -23,17 +23,26 @@
 .navActions { display: flex; gap: 12px; align-items: center; }
 .navActions button { color: var(--ink); }
 .contact, .primary { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; padding: 12px 28px; border-radius: 30px; background: var(--sun); color: var(--ink); font-weight: 500; }
-.heroCopy { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding-block: 64px 80px; }
+.heroCarousel { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.heroCopy { display: flex; flex-direction: column; align-items: flex-start; padding-block: 48px 60px; }
 .eyebrow { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 16px; }
 .hero h1 { max-width: 20ch; font-family: var(--font-display), sans-serif; font-size: clamp(44px, 4.5vw, 76px); font-weight: 800; line-height: 1.12; letter-spacing: -.035em; }
 .hero h1 span { color: var(--sun); }
 .heroCopy > p:not(.eyebrow) { max-width: 56ch; margin-block: 24px 32px; font-size: 17px; line-height: 1.7; }
 .heroActions { display: flex; flex-wrap: wrap; gap: 16px; }
+.heroCarouselControls { display: flex; align-items: center; gap: 12px; margin-top: 28px; }
+.heroCarouselControls > button { display: inline-flex; width: 40px; height: 40px; align-items: center; justify-content: center; border: 1px solid rgb(255 255 255 / .65); border-radius: 50%; color: var(--on-ink); }
+.heroCarouselControls > button svg { width: 19px; height: 19px; }
+.heroCarouselDots { display: flex; align-items: center; gap: 8px; padding-inline: 4px; }
+.heroCarouselDots button { width: 8px; height: 8px; border-radius: 50%; background: rgb(255 255 255 / .55); }
+.heroCarouselDots button[aria-pressed="true"] { width: 22px; border-radius: 8px; background: var(--sun); }
+.heroCarouselControls .heroCarouselPause { width: auto; height: 36px; margin-left: 4px; padding-inline: 12px; border-radius: 20px; font-size: 12px; }
 .secondary { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; padding: 12px 24px; border: 1px solid var(--sun); border-radius: 30px; color: var(--on-ink); }
 .mobileMenu { display: none; }
 .help { max-width: 1248px; padding: 40px 24px; margin: auto; scroll-margin-top: 24px; border-top: 1px solid var(--muted); padding-block: 48px 64px; }
 .help p:not(.eyebrow) { margin-block: 20px; max-width: 48ch; }
 .hero a:focus-visible, .hero summary:focus-visible, .help a:focus-visible { outline: 2px solid currentColor; outline-offset: 5px; }
+.heroCarouselControls button:focus-visible { outline: 2px solid var(--sun); outline-offset: 4px; }
 .categorySection { display: block; }
 
 @media (max-width: 1000px) {
@@ -51,7 +60,7 @@
 
 @media (max-width: 700px) {
   .hero { min-height: 55svh; }
-  .heroHeader, .heroCopy { width: calc(100% - 40px); }
+  .heroHeader, .heroCarousel { width: calc(100% - 40px); }
   .heroHeader { padding-top: 20px; }
   .heroNav { padding: 6px 12px; gap: 8px; border-radius: 16px; }
   .logo img { width: 128px; height: 54px; }
@@ -59,13 +68,20 @@
   .navActions { margin-left: auto; gap: 0; }
   .mobileMenu summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-weight: 500; }
   .mobileMenu > div { left: 0; right: 0; }
-  .heroCopy { flex: 1; padding: clamp(20px, 4svh, 34px) 4px 28px; }
+  .heroCarousel { justify-content: center; }
+  .heroCopy { padding: 22px 4px 24px; }
   .heroImage { object-position: 65% center; }
   .heroShade { background: rgb(10 30 20 / .68); }
   .hero h1 { max-width: 16ch; font-size: clamp(32px, 8.5vw, 42px); line-height: 1.08; letter-spacing: -.03em; }
   .heroCopy > p:not(.eyebrow) { max-width: 40ch; margin-block: 12px 18px; font-size: 15px; line-height: 1.45; }
   .heroActions { gap: 8px; }
   .primary, .secondary { min-height: 44px; padding: 10px 12px; font-size: 12px; white-space: nowrap; }
+  .heroCarouselControls { gap: 9px; margin-top: 18px; }
+  .heroCarouselControls > button { width: 34px; height: 34px; }
+  .heroCarouselDots { gap: 6px; }
+  .heroCarouselDots button { width: 7px; height: 7px; }
+  .heroCarouselDots button[aria-pressed="true"] { width: 18px; }
+  .heroCarouselControls .heroCarouselPause { width: auto; height: 32px; padding-inline: 10px; }
   .categorySection { display: none; }
 }
 

@@ -120,17 +120,20 @@ describe("the home page's title and description", () => {
 describe("home storefront", () => {
   it("introduces the solar range and links to the shop", () => {
     const home = read("src/app/page.tsx");
-    expect(home).toContain("Shop solar, batteries, inverters <span>&amp; accessories.</span>");
+    const carousel = read("src/components/HeroCarousel.tsx");
+    expect(home).toContain("<HeroCarousel />");
+    expect(carousel).toContain("Shop solar, batteries, inverters <span>&amp; accessories.</span>");
     expect(home).not.toContain("Felicity Solar equipment for home and business");
     expect(home).toContain('href="/shop"');
-    expect(home).toContain('href="#home-products"');
-    expect(home).toContain("Shop solar accessories</Link>");
-    expect(home).toContain('href="/contact" className={styles.secondary}>Request solar installation</Link>');
+    expect(carousel).toContain('label: "Shop solar accessories", href: "#home-products"');
+    expect(carousel).toContain('label: "Request free installation quote", href: "/contact#send-message"');
     expect(home).not.toContain("<Slider");
     expect(home).toContain("/solar/solar-technician-hero.jpg");
+    expect(carousel).toContain("Project spotlight");
+    expect(carousel).toContain("owner-approved project photos and location details");
     expect(home).toContain("<CategoryCarousel categories={LAUNCH_CATEGORIES}");
     expect(home).not.toContain("styles.topline");
-    expect(home.indexOf("Shop by category")).toBeGreaterThan(home.indexOf("Shop solar, batteries, inverters"));
+    expect(home.indexOf("Shop by category")).toBeGreaterThan(home.indexOf("<HeroCarousel />"));
     expect(home).toContain("<HomeCatalogue searchParams={searchParams}");
     expect(home).not.toContain("SolarShowcase");
   });

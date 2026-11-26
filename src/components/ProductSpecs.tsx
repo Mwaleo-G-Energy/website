@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import type { ProductDetailCard, SpecRow } from "@/lib/productSpecs";
 import { rowDelayMs, startingPhase, type Phase } from "@/lib/specReveal";
+import styles from "./ProductSpecs.module.css";
 
 type Props = {
   specs: SpecRow[];
@@ -11,9 +12,6 @@ type Props = {
   expansion?: ProductDetailCard[];
   useCases?: ProductDetailCard[];
 };
-
-// The column this sits in is narrow on a computer and wide on a tablet, so the rows follow the box, not the screen.
-const SIDE_BY_SIDE = "[@container(min-width:26rem)]:grid-cols-[minmax(0,10rem)_1fr]";
 
 // These class names are written out here, not in a lib file, because the stylesheet build reads only components and app.
 export const lineClass = (phase: Phase) =>
@@ -26,8 +24,7 @@ export const lineClass = (phase: Phase) =>
 // Only the opacity and the position move, so a colour change later is never held back by the stagger delay set on each row.
 export const rowClass = (phase: Phase) =>
   [
-    "grid gap-x-6 gap-y-0.5 px-4 py-2.5 motion-reduce:transition-none print:opacity-100 print:translate-y-0 sm:py-3",
-    SIDE_BY_SIDE,
+    "grid min-w-0 content-start gap-y-1 motion-reduce:transition-none print:opacity-100 print:translate-y-0",
     phase === "armed" ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0",
     phase === "shown" ? "transition-[opacity,transform] duration-500 ease-out" : "",
   ].join(" ");
@@ -84,11 +81,11 @@ export default function ProductSpecs({ specs, features = [], featureCards = [], 
           Specifications
         </h3>
         <span data-spec-line="" aria-hidden="true" className={lineClass(phase)} />
-        <dl className="mt-4 [container-type:inline-size] divide-y divide-gray-200 border-y border-gray-200">
+        <dl data-spec-grid="" className={`${styles.grid} mt-4`}>
           {specs.map((spec, index) => (
-            <div key={index} data-spec-row="" className={rowClass(phase)} style={rowDelay(index)}>
-              <dt className="text-xs font-medium uppercase tracking-wide text-gray-500 [@container(min-width:26rem)]:pt-0.5">{spec.label}</dt>
-              <dd className="min-w-0 break-words text-sm font-semibold text-gray-900 first-letter:uppercase">{spec.value}</dd>
+            <div key={index} data-spec-row="" data-spec-cell="" className={`${styles.cell} ${rowClass(phase)}`} style={rowDelay(index)}>
+              <dt className="break-words text-[10px] font-medium uppercase tracking-wide text-gray-500 sm:text-xs">{spec.label}</dt>
+              <dd className="min-w-0 break-words text-[13px] font-semibold text-gray-900 first-letter:uppercase sm:text-sm">{spec.value}</dd>
             </div>
           ))}
         </dl>
