@@ -30,6 +30,8 @@ const config: Config = {
           navy: "var(--ink)",
           panel: "var(--ink)",
           cream: "var(--stone)",
+          leaf: "var(--leaf)",
+          "leaf-ink": "var(--leaf-ink)",
         },
       },
     },

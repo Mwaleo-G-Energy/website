@@ -189,7 +189,7 @@ const Gallery = ({ photos, name }: { photos: { id: string; url: string }[]; name
           if (event.touches.length > 1) swipeStart.current = null; // a pinch is not a swipe
         }}
         onTouchEnd={onTouchEnd}
-        className="relative block h-[min(320px,42vh)] w-full cursor-zoom-in overflow-hidden rounded-md bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold sm:h-[400px] lg:h-[500px]"
+        className="relative block h-[min(340px,46vh)] w-full cursor-zoom-in overflow-hidden border border-gray-200 bg-brand-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold sm:h-[460px] lg:h-[560px]"
       >
         <Image
           src={current.url}
@@ -197,11 +197,11 @@ const Gallery = ({ photos, name }: { photos: { id: string; url: string }[]; name
           fill
           priority
           sizes="(min-width: 1024px) 50vw, 100vw"
-          className="object-cover transition-opacity duration-500"
+          className="object-contain p-5 transition-opacity duration-500 motion-reduce:transition-none sm:p-8"
         />
         <span
           aria-hidden="true"
-          className="absolute bottom-2 right-2 rounded-full bg-black/60 px-3 py-1 text-xs text-white"
+          className="absolute bottom-3 right-3 border border-gray-300 bg-white/90 px-3 py-1.5 text-xs font-medium text-brand-black dark:border-gray-600 dark:bg-[#1f2428]/90 dark:text-white"
         >
           Tap to zoom
         </span>
@@ -220,9 +220,9 @@ const Gallery = ({ photos, name }: { photos: { id: string; url: string }[]; name
                   key={photos[index].id}
                   data-slot={role}
                   aria-current="true"
-                  className="relative h-20 w-20 overflow-hidden rounded-md ring-2 ring-brand-gold"
+                  className="relative h-20 w-20 overflow-hidden border-2 border-brand-leaf bg-brand-cream"
                 >
-                  <Image src={photos[index].url} alt="" fill sizes="80px" className="object-cover" />
+                  <Image src={photos[index].url} alt="" fill sizes="80px" className="object-contain p-1" />
                 </div>
               ) : (
                 <button
@@ -231,9 +231,9 @@ const Gallery = ({ photos, name }: { photos: { id: string; url: string }[]; name
                   data-slot={role}
                   aria-label={`Show photo ${index + 1} of ${photos.length}`}
                   onClick={() => dispatch({ type: "select", index })}
-                  className="relative h-14 w-14 overflow-hidden rounded-md opacity-60 transition-opacity hover:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+                  className="relative h-14 w-14 overflow-hidden border border-gray-300 bg-brand-cream opacity-65 transition-opacity hover:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none"
                 >
-                  <Image src={photos[index].url} alt="" fill sizes="56px" className="object-cover" />
+                  <Image src={photos[index].url} alt="" fill sizes="56px" className="object-contain p-1" />
                 </button>
               )
             )}

@@ -91,6 +91,8 @@ const Filter = ({ bounds }: { bounds?: Bounds | null }) => {
   const min = searchParams.get("min") ?? "";
   const max = searchParams.get("max") ?? "";
   const hasPrice = min !== "" || max !== "";
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const activeCount = Number(hasPrice) + Number(Boolean(sort));
 
   const applyPrice = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -105,9 +107,20 @@ const Filter = ({ bounds }: { bounds?: Bounds | null }) => {
   };
 
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-      {bounds ? (
-        <div key={`${min}|${max}`} className="flex flex-wrap items-end gap-4">
+    <div className="space-y-3">
+      <button
+        type="button"
+        className="flex min-h-11 w-full items-center justify-between border border-gray-300 bg-white px-3 text-left text-sm font-semibold text-gray-900 md:hidden"
+        aria-expanded={mobileOpen}
+        aria-controls="shop-filter-panel"
+        onClick={() => setMobileOpen((open) => !open)}
+      >
+        <span>Filter &amp; sort{activeCount > 0 ? ` · ${activeCount} active` : ""}</span>
+        <span aria-hidden="true">{mobileOpen ? "−" : "+"}</span>
+      </button>
+      <div id="shop-filter-panel" className={`${mobileOpen ? "flex" : "hidden"} flex-col gap-4 border border-gray-200 bg-white p-3 md:flex md:flex-row md:items-end md:justify-between md:border-0 md:bg-transparent md:p-0`}>
+        {bounds ? (
+        <div key={`${min}|${max}`} className="flex flex-wrap items-end gap-3 md:gap-4">
           <PriceSlider
             bounds={bounds}
             initial={clampRange(min ? Number(min) : bounds.min, max ? Number(max) : bounds.max, bounds)}
@@ -123,7 +136,7 @@ const Filter = ({ bounds }: { bounds?: Bounds | null }) => {
           )}
         </div>
       ) : (
-      <form key={`${min}|${max}`} onSubmit={applyPrice} className="flex flex-wrap items-end gap-3">
+        <form key={`${min}|${max}`} onSubmit={applyPrice} className="flex flex-wrap items-end gap-2 md:gap-3">
         <div>
           <label htmlFor="filter-min" className={label}>Min price</label>
           <input
@@ -150,7 +163,7 @@ const Filter = ({ bounds }: { bounds?: Bounds | null }) => {
         </div>
         <button
           type="submit"
-          className="rounded-lg bg-brand-navy px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-gold hover:text-brand-navy"
+          className="rounded bg-brand-navy px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-gold hover:text-brand-navy"
         >
           Apply
         </button>
@@ -162,8 +175,8 @@ const Filter = ({ bounds }: { bounds?: Bounds | null }) => {
             Clear
           </Link>
         )}
-      </form>
-      )}
+        </form>
+        )}
 
       <div>
         <label htmlFor="filter-sort" className={label}>Sort by</label>
@@ -180,6 +193,7 @@ const Filter = ({ bounds }: { bounds?: Bounds | null }) => {
             <option key={s.value} value={s.value}>{s.label}</option>
           ))}
         </select>
+      </div>
       </div>
     </div>
   );

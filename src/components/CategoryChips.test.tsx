@@ -7,6 +7,7 @@ const chips = [
   { name: "Gent's Watches", slug: "gents-watches" },
 ];
 const html = (activeSlug: string | null) => renderToStaticMarkup(<CategoryChips chips={chips} activeSlug={activeSlug} />);
+const compactHtml = renderToStaticMarkup(<CategoryChips chips={chips} activeSlug="" compact />);
 
 describe("CategoryChips", () => {
   it("starts with All products, then one pill for each category, as links to the shop", () => {
@@ -43,5 +44,9 @@ describe("CategoryChips", () => {
     const out = html("gents-watches");
     expect(out).not.toMatch(/bg-black|pink|rose|fuchsia/);
     expect(out).toContain("bg-brand-navy");
+  });
+
+  it("offers smaller category pills when embedded in the homepage catalogue", () => {
+    expect(compactHtml).toContain("px-3 py-1.5 text-xs md:px-5 md:py-2 md:text-sm");
   });
 });

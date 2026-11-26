@@ -5,7 +5,9 @@ describe("product page buttons", () => {
   const source = readFileSync("src/app/[slug]/page.tsx", "utf8");
 
   it("keeps Order on WhatsApp directly under Add to Cart, in one tight group", () => {
-    const group = source.match(/<div className="flex flex-col gap-3">([\s\S]*?)<\/div>\s*\n\s*<div className="h-\[2px\]/)?.[1] ?? "";
+    const start = source.indexOf('<div className="flex flex-col gap-3">');
+    const end = source.indexOf('<div className="h-px', start);
+    const group = start >= 0 && end > start ? source.slice(start, end) : "";
     expect(group).toContain("<Add");
     expect(group).toContain("<CustomizeProducts");
     expect(group.indexOf("<Add")).toBeLessThan(group.indexOf("<OrderOnWhatsApp"));
